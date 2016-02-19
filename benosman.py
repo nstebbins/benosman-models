@@ -42,24 +42,28 @@ class neuron(object):
 
 		# encoding
 		spike_poses = self.get_spike_poses()
-		f_x = np.zeros(np.size(spike_poses))
+		index_f = np.zeros(np.size(spike_poses))
 
 		for i in xrange(0, np.size(spike_poses)):
-			f_x[i] = T_min + self.values_to_encode[i] * T_cod
+			'''index_f denotes shift amount,
+				en_spike_idx denotes encoding spike index'''
+			index_f[i] = self.TIME_POS_CONV * round(T_min + self.values_to_encode[i] * T_cod, 1)
+			en_spike_idx = int(index_f[i] + spike_poses[i][0])
 
-		print f_x
+			if en_spike_idx < np.size(self.spikes): # update spike poses
+				self.spikes[en_spike_idx] = 1
 
 
 	def get_spike_poses(self):
 		return zip(*np.where(self.spikes == 1))
 
-	def plot_spikes(self):
+	def plot_spikes(self, title):
 		plt.figure()
 		plt.scatter(self.t, self.spikes, marker='None')
 
 		# spike poses
-		spike_poses = get_spike_poses()
-		labels = ['t={0}ms'.format(i[0] / TIME_POS_CONV) for i in spike_poses]
+		spike_poses = self.get_spike_poses()
+		labels = ['t={0}ms'.format(i[0] / self.TIME_POS_CONV) for i in spike_poses]
 
 		# add special markup for spike times
 		for spike_pos in spike_poses:
@@ -69,7 +73,7 @@ class neuron(object):
 		for label, x in zip(labels, spike_poses):
 			plt.annotate( # from stack overflow
 		        label,
-		        xy = (x[0] / TIME_POS_CONV, 1), xytext = (0, mult * 40),
+		        xy = (x[0] / self.TIME_POS_CONV, 1), xytext = (0, mult * 40),
 		        textcoords = 'offset points', ha = 'right', va = 'bottom',
 		        bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
 		        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
@@ -79,7 +83,7 @@ class neuron(object):
 		axes.set_ylim([0, 2])
 		plt.xlabel("time (ms)")
 		plt.grid(True)
-		plt.title("spike times")
+		plt.title(title)
 
 		plt.show()
 
@@ -102,9 +106,6 @@ class input_neuron(neuron): # e.g. recall neuron
 
 		for i in xrange(0, np.size(self.spikes), 110 * super(input_neuron, self).TIME_POS_CONV + 1):
 			self.spikes[i] = 1 if np.random.rand(1, 1) > spike_prob_thresh else 0
-
-	def plot_spikes(self):
-		super(input_neuron, self).plot_spikes()
 
 class network_neuron(neuron):
 
@@ -164,8 +165,6 @@ class network_neuron(neuron):
 				gate = 0
 				self.spikes[i] = 1 # add spike
 
-	def plot_spikes(self):
-		super(network_neuron, self).plot_spikes()
 
 
 def main():
@@ -176,13 +175,19 @@ def main():
 
 	recall_neuron = input_neuron(t, 0.7)
 
-	'''
-	recall_neuron.plot_spikes()
-	'''
+	# BEFORE ENCODING
+	print "spike indices (BEFORE encoding):"
+	print recall_neuron.get_spike_poses()
+	recall_neuron.plot_spikes("recall neuron, before encoding")
 
 	recall_neuron.values_to_encode = np.random.uniform(0,
 		1, np.size(recall_neuron.get_spike_poses()))
-	recall_neuron.encode_values()	
+	recall_neuron.encode_values()
+
+	# AFTER ENCODING
+	print "spike indices (AFTER encoding):"
+	print recall_neuron.get_spike_poses()
+	recall_neuron.plot_spikes("recall neuron, after encoding")
 
 	# OUTPUT (output neuron)
 
