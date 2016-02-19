@@ -28,17 +28,38 @@ class synapses(object):
 
 class neuron(object):
 
-	def __init__(self, t, spikes): # all neurons have spikes + time frame
+	TIME_POS_CONV = 10 # because time has increments of 0.1
+
+	def __init__(self, t, spikes, values_to_encode = None): # all neurons have spikes + time frame
 		self.t = t
 		self.spikes = spikes
+		self.values_to_encode = values_to_encode
+
+	def encode_values(self):
+
+		# constants
+		T_min = 10; T_cod = 100
+
+		# encoding
+		spike_poses = self.get_spike_poses()
+		f_x = np.zeros(np.size(spike_poses))
+
+		for i in xrange(0, np.size(spike_poses)):
+			f_x[i] = T_min + self.values_to_encode[i] * T_cod
+
+		print f_x
+
+
+	def get_spike_poses(self):
+		return zip(*np.where(self.spikes == 1))
 
 	def plot_spikes(self):
 		plt.figure()
 		plt.scatter(self.t, self.spikes, marker='None')
 
 		# spike poses
-		spike_poses = zip(*np.where(self.spikes == 1))
-		labels = ['t={0}ms'.format(i[0] / 10) for i in spike_poses]
+		spike_poses = get_spike_poses()
+		labels = ['t={0}ms'.format(i[0] / TIME_POS_CONV) for i in spike_poses]
 
 		# add special markup for spike times
 		for spike_pos in spike_poses:
@@ -48,7 +69,7 @@ class neuron(object):
 		for label, x in zip(labels, spike_poses):
 			plt.annotate( # from stack overflow
 		        label,
-		        xy = (x[0] / 10, 1), xytext = (0, mult * 40),
+		        xy = (x[0] / TIME_POS_CONV, 1), xytext = (0, mult * 40),
 		        textcoords = 'offset points', ha = 'right', va = 'bottom',
 		        bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
 		        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
@@ -64,12 +85,14 @@ class neuron(object):
 
 class input_neuron(neuron): # e.g. recall neuron
 
-	def __init__(self, t, spike_prob_thresh = 0):
+	def __init__(self, t, spike_prob_thresh = 0, values_to_encode = None):
 		'''initializes both time and spikes (randomly generated)'''
 
 		self.t = t
 		self.gen_random_spikes(spike_prob_thresh)
-		super(input_neuron, self).__init__(self.t, self.spikes)
+		self.values_to_encode = values_to_encode
+		super(input_neuron, self).__init__(self.t,
+			self.spikes, self.values_to_encode)
 
 	def gen_random_spikes(self, spike_prob_thresh):
 		'''spike_step is min interval between spikes (so we can encode)
@@ -77,7 +100,7 @@ class input_neuron(neuron): # e.g. recall neuron
 
 		self.spikes = np.zeros(np.shape(self.t))
 
-		for i in xrange(0, np.size(self.spikes), 110 * 10 + 1):
+		for i in xrange(0, np.size(self.spikes), 110 * super(input_neuron, self).TIME_POS_CONV + 1):
 			self.spikes[i] = 1 if np.random.rand(1, 1) > spike_prob_thresh else 0
 
 	def plot_spikes(self):
@@ -85,13 +108,15 @@ class input_neuron(neuron): # e.g. recall neuron
 
 class network_neuron(neuron):
 
-	def __init__(self, v_syn, ge_syn, gf_syn, gate_syn, t):
+	def __init__(self, v_syn, ge_syn, gf_syn, gate_syn, t, values_to_encode = None):
 		'''initializes time, voltage, and spikes'''
 
 		self.syn = synapses(v_syn, ge_syn, gf_syn, gate_syn)
 		self.t = t
 		self.gen_voltage() # create spikes
-		super(network_neuron, self).__init__(self.t, self.spikes)
+		self.values_to_encode = values_to_encode
+		super(network_neuron, self).__init__(self.t, self.spikes,
+			self.values_to_encode)
 
 	def gen_voltage(self): # sets spikes and v
 		'''model voltage of network neuron'''
@@ -109,6 +134,8 @@ class network_neuron(neuron):
 
 		gate = 1 if self.syn.gate_syn[0] == 1 else 0 # default
 		ge = self.syn.ge_syn[0]
+
+		gate = 1; ge = 300; gf[0] = 40000 #@DEBUG to test model
 
 		for i in xrange(1, np.size(self.t)):
 			# update state variables (biases)
@@ -146,19 +173,29 @@ def main():
 	t = np.multiply(TO_MS, np.arange(0, 1.5, 1e-4)) # time in MS
 
 	# RECALL (input neuron)
+
 	recall_neuron = input_neuron(t, 0.7)
-	recall_neuron.plot_spikes()
 
 	'''
-	print "number of spikes: " + str(np.size(np.where(recall_neuron.spikes == 1)))
+	recall_neuron.plot_spikes()
+	'''
+
+	recall_neuron.values_to_encode = np.random.uniform(0,
+		1, np.size(recall_neuron.get_spike_poses()))
+	recall_neuron.encode_values()	
 
 	# OUTPUT (output neuron)
-	empty_syn = np.zeros(np.shape(t))
-	output_neuron = network_neuron(empty_syn, empty_syn, empty_syn, empty_syn, t)
-	output_neuron.syn.print_syn() # visual
-	output_neuron.gen_voltage()
-	print np.max(output_neuron.v)
+
+	output_neuron = network_neuron(np.zeros(np.shape(t)),
+		np.zeros(np.shape(t)), np.zeros(np.shape(t)), np.zeros(np.shape(t)), t)
+
 	'''
+	print "OUTPUT NEURON"
+	output_neuron.syn.print_syn() # visual
+	print "voltage" + np.array_str(output_neuron.v)
+	print "spikes" + np.array_str(output_neuron.spikes)
+	'''
+
 	# MISCELLANEOUS
 
 	# for each spike, there is also an associated x value
