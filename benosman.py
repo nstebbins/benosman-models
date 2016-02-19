@@ -5,6 +5,12 @@ import matplotlib.pyplot as plt
 
 np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+
+warnings.filterwarnings("ignore", module="matplotlib")
+
 # global variables
 TO_MS = 1000
 
@@ -28,32 +34,50 @@ class neuron(object):
 
 	def plot_spikes(self):
 		plt.figure()
-		plt.subplot(111)
+		plt.scatter(self.t, self.spikes, marker='None')
 
-		plt.bar(self.t, self.spikes, 5)
+		# spike poses
+		spike_poses = zip(*np.where(self.spikes == 1))
+		labels = ['t={0}ms'.format(i[0] / 10) for i in spike_poses]
+
+		# add special markup for spike times
+		for spike_pos in spike_poses:
+			plt.scatter(self.t[spike_pos], self.spikes[spike_pos], color='b', marker='o')
+
+		mult = 1 # control for labels
+		for label, x in zip(labels, spike_poses):
+			plt.annotate( # from stack overflow
+		        label,
+		        xy = (x[0] / 10, 1), xytext = (0, mult * 40),
+		        textcoords = 'offset points', ha = 'right', va = 'bottom',
+		        bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
+		        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
+			mult = mult * -1
+
 		axes = plt.gca()
 		axes.set_ylim([0, 2])
 		plt.xlabel("time (ms)")
-		plt.ylabel("spikes")
 		plt.grid(True)
-		plt.title("spike times of recall neuron")
+		plt.title("spike times")
 
 		plt.show()
 
 class input_neuron(neuron): # e.g. recall neuron
 
-	def __init__(self, t, spike_prob_thresh = 0): # default constructor
+	def __init__(self, t, spike_prob_thresh = 0):
+		'''initializes both time and spikes (randomly generated)'''
+
 		self.t = t
-		self.gen_random_spikes(110, spike_prob_thresh)
+		self.gen_random_spikes(spike_prob_thresh)
 		super(input_neuron, self).__init__(self.t, self.spikes)
 
-	def gen_random_spikes(self, spike_step_ms, spike_prob_thresh):
+	def gen_random_spikes(self, spike_prob_thresh):
 		'''spike_step is min interval between spikes (so we can encode)
 			spike_prob_thresh is min threshold check (influences spike density)'''
 
 		self.spikes = np.zeros(np.shape(self.t))
 
-		for i in xrange(0, np.size(self.spikes), spike_step_ms * 10 + 1):
+		for i in xrange(0, np.size(self.spikes), 110 * 10 + 1):
 			self.spikes[i] = 1 if np.random.rand(1, 1) > spike_prob_thresh else 0
 
 	def plot_spikes(self):
@@ -62,6 +86,8 @@ class input_neuron(neuron): # e.g. recall neuron
 class network_neuron(neuron):
 
 	def __init__(self, v_syn, ge_syn, gf_syn, gate_syn, t):
+		'''initializes time, voltage, and spikes'''
+
 		self.syn = synapses(v_syn, ge_syn, gf_syn, gate_syn)
 		self.t = t
 		self.gen_voltage() # create spikes
@@ -117,25 +143,22 @@ class network_neuron(neuron):
 
 def main():
 
-	# setup
-
 	t = np.multiply(TO_MS, np.arange(0, 1.5, 1e-4)) # time in MS
-	print "time: " + np.array_str(t)
 
-	# recall (input) neuron
+	# RECALL (input neuron)
+	recall_neuron = input_neuron(t, 0.7)
+	recall_neuron.plot_spikes()
 
-	recall_neuron = input_neuron(t, 0)
-	print "recall spike vector: " + np.array_str(recall_neuron.spikes)
+	'''
 	print "number of spikes: " + str(np.size(np.where(recall_neuron.spikes == 1)))
 
-	# output neuron
-
+	# OUTPUT (output neuron)
 	empty_syn = np.zeros(np.shape(t))
 	output_neuron = network_neuron(empty_syn, empty_syn, empty_syn, empty_syn, t)
 	output_neuron.syn.print_syn() # visual
 	output_neuron.gen_voltage()
 	print np.max(output_neuron.v)
-
+	'''
 	# MISCELLANEOUS
 
 	# for each spike, there is also an associated x value
