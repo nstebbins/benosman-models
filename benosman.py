@@ -1,10 +1,12 @@
 #!/usr/bin/python
 
 import numpy as np
+import matplotlib.pyplot as plt
+
+# global variables
+TO_MS = 1000
 
 class synapses(object):
-
-	v_syn, ge_syn, gf_syn, gate_syn = [np.zeros(1) for _ in xrange(4)]
 
 	def __init__(self, v_syn, ge_syn, gf_syn, gate_syn):
 		self.v_syn = v_syn
@@ -17,19 +19,39 @@ class synapses(object):
 		for header in ["v_syn", "ge_syn", "gf_syn", "gate_syn"]:
 			print header + ": " + np.array_str(self.__dict__[header])
 
-def benosman_voltage():
+class neuron(object):
 	pass
+
+class input_neuron(neuron): # e.g. recall neuron
+
+	def __init__(self, t): # default constructor
+		self.spikes = self.gen_random_spikes(t)
+
+	def gen_random_spikes(self, t): # possible spike every 110ms
+		spikes = np.zeros(np.shape(t))
+		return spikes
+
+class network_neuron(neuron):
+
+	def __init__(self, v_syn, ge_syn, gf_syn, gate_syn):
+		self.syn = synapses(v_syn, ge_syn, gf_syn, gate_syn)
+
+	def gen_voltage(self):
+		tau_m = 100 * TO_MS; tau_f = 20
+		V_thresh = 10; V_reset = 0
 
 def main():
 
 	# setup
-	t = np.arange(0, 1.5, 1e-5) # time (all of this in fixed time frame)
+	t = np.multiply(TO_MS, np.arange(0, 1.5, 1e-5)) # time in MS
 
-	# generate spike train for RECALL
-	s = np.zeros(5) # arbitrary, will fill in
+	recall_neuron = input_neuron(t)
+	print recall_neuron.spikes
 
-	init_synapses = synapses(s, s, s, s)
-	init_synapses.print_syn()
+	empty_syn = np.zeros(np.shape(t))
+
+	output_neuron = network_neuron(empty_syn, empty_syn, empty_syn, empty_syn)
+	output_neuron.syn.print_syn()
 
 	# trim, such that minimum spike width is f(1) + eps
 	# note: we want no interference; each spike should encode
