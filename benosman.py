@@ -26,24 +26,25 @@ class neuron(object):
 class input_neuron(neuron): # e.g. recall neuron
 
 	def __init__(self, t, spike_prob_thresh = 0): # default constructor
-		self.spikes = self.gen_random_spikes(t, 110, spike_prob_thresh)
+		self.t = t
+		self.spikes = self.gen_random_spikes(110, spike_prob_thresh)
 
-	def gen_random_spikes(self, t, spike_step_ms, spike_prob_thresh):
+	def gen_random_spikes(self, spike_step_ms, spike_prob_thresh):
 		'''spike_step is min interval between spikes (so we can encode)
 			spike_prob_thresh is min threshold check (influences spike density)'''
 
-		spikes = np.zeros(np.shape(t))
+		spikes = np.zeros(np.shape(self.t))
 
 		for i in xrange(0, np.size(spikes), spike_step_ms * 10 + 1):
 			spikes[i] = 1 if np.random.rand(1, 1) > spike_prob_thresh else 0
 
 		return spikes
 
-	def plot_spikes(self, t):
+	def plot_spikes(self):
 		plt.figure()
 		plt.subplot(111)
 
-		plt.bar(t, self.spikes, 5)
+		plt.bar(self.t, self.spikes, 5)
 		axes = plt.gca()
 		axes.set_ylim([0, 2])
 		plt.xlabel("time (ms)")
@@ -55,12 +56,26 @@ class input_neuron(neuron): # e.g. recall neuron
 
 class network_neuron(neuron):
 
-	def __init__(self, v_syn, ge_syn, gf_syn, gate_syn):
+	def __init__(self, v_syn, ge_syn, gf_syn, gate_syn, t):
 		self.syn = synapses(v_syn, ge_syn, gf_syn, gate_syn)
+		self.t = t
 
 	def gen_voltage(self):
+		'''model voltage of network neuron'''
+
+		# constants for voltage model
 		tau_m = 100 * TO_MS; tau_f = 20
 		V_thresh = 10; V_reset = 0
+		dt = self.t[1] - self.t[0]
+
+		v = np.copy(self.syn.v_syn)
+		gf = np.copy(self.syn.gf_syn)
+
+		gate = self.syn.gate_syn[0]
+		ge = self.syn.ge_syn[0]
+
+		for i in xrange(2, np.size(self.t)):
+			pass
 
 def main():
 
@@ -71,19 +86,18 @@ def main():
 
 	# recall (input) neuron
 
-	recall_neuron = input_neuron(t)
+	recall_neuron = input_neuron(t, 0)
 	print "recall spike vector: " + np.array_str(recall_neuron.spikes)
-
-	recall_neuron.plot_spikes(t)
+	print "number of spikes: " + str(np.size(np.where(recall_neuron.spikes == 1)))
 
 	# output neuron
 
-	output_neuron = network_neuron(np.zeros(np.shape(t)),
-		np.zeros(np.shape(t)), np.zeros(np.shape(t)), np.zeros(np.shape(t)))
-	output_neuron.syn.print_syn()
+	empty_syn = np.zeros(np.shape(t))
+	output_neuron = network_neuron(empty_syn, empty_syn, empty_syn, empty_syn, t)
+	# output_neuron.syn.print_syn()
+	output_neuron.gen_voltage()
 
-	# recall neuron plot output
-	recall_neuron.plot_spikes(t)
+	# recall_neuron.plot_spikes(t) # recall neuron plot output
 
 	# trim, such that minimum spike width is f(1) + eps
 	# note: we want no interference; each spike should encode
