@@ -5,14 +5,7 @@ import matplotlib.pyplot as plt
 
 np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 
-import warnings
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-
-warnings.filterwarnings("ignore", module="matplotlib")
-
-# global variables
-TO_MS = 1000
+TO_MS = 1000 # convert to milliseconds
 
 class synapses(object):
 
@@ -35,20 +28,17 @@ class neuron(object):
         self.spikes = spikes
         self.values_to_encode = values_to_encode
 
-    def encode_values(self):
+    def encode_values(self): # augmenting self.spikes with encoded values
 
-        # constants
-        T_min = 10; T_cod = 100
+        T_min = 10; T_cod = 100 # constants
 
-        # encoding
         spike_poses = self.get_spike_poses()
-        index_f = np.zeros(np.size(spike_poses))
 
-        for i in range(0, np.size(spike_poses)):
+        for i in range(np.size(spike_poses)):
             '''index_f denotes shift amount,
                 en_spike_idx denotes encoding spike index'''
-            index_f[i] = self.TIME_POS_CONV * round(T_min + self.values_to_encode[i] * T_cod, 1)
-            en_spike_idx = int(index_f[i] + spike_poses[i])
+            shift_pos_amt = self.TIME_POS_CONV * round(T_min + self.values_to_encode[i] * T_cod, 1)
+            en_spike_idx = int(shift_pos_amt + spike_poses[i])
 
             if en_spike_idx < np.size(self.spikes): # update spike poses
                 self.spikes[en_spike_idx] = 1
@@ -200,11 +190,11 @@ def main():
     '''
     output_neuron = network_neuron(np.zeros(np.shape(t)),
         np.zeros(np.shape(t)), np.zeros(np.shape(t)), np.zeros(np.shape(t)), t)
-    '''    
+    '''
 
     print("OUTPUT NEURON")
-    output_neuron.syn.print_syn() # displays synapse components
-    print("voltage" + np.array_str(output_neuron.v))
+    # output_neuron.syn.print_syn() # displays synapse components
+    # print("voltage" + np.array_str(output_neuron.v))
 
     print("spike indices:")
     print(list(output_neuron.get_spike_poses()))
