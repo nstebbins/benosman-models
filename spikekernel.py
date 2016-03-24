@@ -4,10 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # constants (time constants in mS)
-TO_MS = 1000
+TO_MS = 1000; T_TO_POS = 10
 V_t = 10; V_reset = 0 # voltage model params
 w_e = V_t; w_i = -V_t # standardized synapse weights
-T_syn = 1; T_neu = 0.01 # standardized delays
+T_syn = 1; T_neu = 0.1 # standardized delays (slightly modified T_neu)
 
 class synapse(object):
 
@@ -64,11 +64,10 @@ class adj_matrix(object):
         self.synapse_matrix = np.empty((neurons.size, neurons.size),
             dtype=object)
 
+        # fill in synapse matrix
         for synapse_list in synapses:
             i = synapse_list.n_from; j = synapse_list.n_to
             self.synapse_matrix[i][j] = synapse_list
-
-        print(np.array_str(self.synapse_matrix))
 
     def simulate(self): # update voltages for neurons
         global V_t
@@ -82,10 +81,26 @@ class adj_matrix(object):
                     for n_to in range(0,self.neurons.size):
                         if self.synapse_matrix[ni][n_to] is not None:
                             for syn in self.synapse_matrix[ni][n_to].synapses:
-                                print("synapse")
+                                self.synapse_prop(syn, n_to, tj)
 
                     # for debugging
                     print("spike: (neuron) " + str(ni) + ", (tj) " + str(tj))
+
+    def synapse_prop(self, syn, n_to, tj):
+        global T_TO_POS
+        if syn.s_type is "V":
+            self.neurons[n_to].v[tj + int(T_TO_POS * syn.s_delay)] += syn.s_weight
+        elif syn.s_type is "g_e":
+            self.neurons[n_to].g_e[tj + int(T_TO_POS * syn.s_delay)] += syn.s_weight
+        elif syn.s_type is "g_f":
+            self.neurons[n_to].g_f[tj + int(T_TO_POS * syn.s_delay)] += syn.s_weight
+        else: # gate synapse
+            if syn.s_weight is 1:
+                self.neurons[n_to].gate[tj + int(T_TO_POS * syn.s_delay)] = 1
+            elif syn.s_weight is -1:
+                self.neurons[n_to].gate[tj + int(T_TO_POS * syn.s_delay)] = 0
+            else:
+                pass # throw error
 
 
 def main(): # logarithm model
@@ -109,6 +124,12 @@ def main(): # logarithm model
     synapses = np.asarray([
         synapse_list(0, 1, np.asarray([
             synapse("V", w_e, T_syn)
+        ])),
+        synapse_list(1, 1, np.asarray([
+            synapse("V", w_i, T_syn)
+        ])),
+        synapse_list(0, 2, np.asarray([
+            synapse("V", 0.5 * w_e, T_syn)
         ]))
     ])
 
