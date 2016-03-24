@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 # constants (time constants in mS)
 TO_MS = 1000
-V_t = 10; V_reset = 0
-w_e = V_t; w_i = -V_t
-T_syn = 1; T_neu = 0.01
+V_t = 10; V_reset = 0 # voltage model params
+w_e = V_t; w_i = -V_t # standardized synapse weights
+T_syn = 1; T_neu = 0.01 # standardized delays
 
 class synapse(object):
 
@@ -26,18 +26,41 @@ class synapse_list(object):
 class neuron(object):
 
     def __init__(self, t):
+        self.t = t
         self.v = np.zeros(np.shape(t))
 
-    def next_v(self): # compute next voltage unit
+        self.g_e = np.zeros(np.shape(t))
+        self.g_f = np.zeros(np.shape(t))
+        self.gate = np.zeros(np.shape(t))
+
+    def next_v(self, i): # compute voltage at pos i
 
         # constants (time consts in mS; V consts in mV)
         tau_m = 100 * TO_MS; tau_f = 20
+        dt = self.t[1] - self.t[0]
         global V_t, V_reset
+
+        if self.v[i-1] >= V_t:
+            v_p = V_reset; ge_p = 0; gf_p = 0; gate_p = 0
+        else:
+            v_p = self.v[i-1]
+            ge_p = self.g_e[i-1]
+            gf_p = self.g_f[i-1]
+            gate_p = self.gate[i-1]
+
+        self.g_f[i] = self.g_f[i] + gf_p + dt * (-gf_p / tau_f)
+        self.v[i] = self.v[i] + v_p + dt * ((ge_p + gf_p * gate_p) / tau_m)
 
 class adj_matrix(object):
 
     def __init__(self, neurons, synapses):
-        self.synapse_matrix = np.empty((neurons.size, neurons.size), dtype=synapse_list)
+        self.synapse_matrix = np.empty((neurons.size, neurons.size),
+            dtype=object)
+
+        for synapse_list in synapses:
+            i = synapse_list.n_from; j = synapse_list.n_to
+            self.synapse_matrix[i][j] = synapse_list
+
         print(np.array_str(self.synapse_matrix))
 
 def main(): # logarithm model
@@ -45,7 +68,7 @@ def main(): # logarithm model
     # time frame
     t = np.multiply(TO_MS, np.arange(0, 1.5, 1e-4)) # time in MS
 
-    # initialize neurons
+    # neurons
     input_neuron = neuron(t)
     first_neuron = neuron(t)
     last_neuron = neuron(t)
@@ -55,11 +78,14 @@ def main(): # logarithm model
     neurons = np.asarray([input_neuron, first_neuron, last_neuron,
         acc_neuron, output_neuron])
 
-    # initialize adj matrix
+    # synapses
     synapses = np.asarray([
-        synapse_list(0, 2, np.asarray(synapse("V", w_e, T_syn)))
+        synapse_list(0, 1, np.asarray(
+            synapse("V", w_e, T_syn)
+        ))
     ])
 
+    # adjacency matrix
     synapse_matrix = adj_matrix(neurons, synapses)
 
     # simulate
