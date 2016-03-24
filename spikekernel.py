@@ -33,6 +33,12 @@ class neuron(object):
         self.g_f = np.zeros(np.shape(t))
         self.gate = np.zeros(np.shape(t))
 
+    def plot_v(self): #TBD
+        pass
+
+    def plot_spikes(self): #TBD
+        pass
+
     def next_v(self, i): # compute voltage at pos i
 
         # constants (time consts in mS; V consts in mV)
@@ -54,6 +60,7 @@ class neuron(object):
 class adj_matrix(object):
 
     def __init__(self, neurons, synapses):
+        self.neurons = neurons
         self.synapse_matrix = np.empty((neurons.size, neurons.size),
             dtype=object)
 
@@ -62,6 +69,24 @@ class adj_matrix(object):
             self.synapse_matrix[i][j] = synapse_list
 
         print(np.array_str(self.synapse_matrix))
+
+    def simulate(self): # update voltages for neurons
+        global V_t
+        t = (self.neurons[0].t) # retrieve time window
+        for tj in range(1, t.size):
+            for ni in range(self.neurons.size):
+                self.neurons[ni].next_v(tj)
+                if self.neurons[ni].v[tj] >= V_t:
+
+                    # check adjacency matrix for synapses to send out
+                    for n_to in range(0,self.neurons.size):
+                        if self.synapse_matrix[ni][n_to] is not None:
+                            for syn in self.synapse_matrix[ni][n_to].synapses:
+                                print("synapse")
+
+                    # for debugging
+                    print("spike: (neuron) " + str(ni) + ", (tj) " + str(tj))
+
 
 def main(): # logarithm model
 
@@ -75,20 +100,21 @@ def main(): # logarithm model
     acc_neuron = neuron(t)
     output_neuron = neuron(t)
 
+    input_neuron.v[400] = V_t; input_neuron.v[800] = V_t
+
     neurons = np.asarray([input_neuron, first_neuron, last_neuron,
         acc_neuron, output_neuron])
 
     # synapses
     synapses = np.asarray([
-        synapse_list(0, 1, np.asarray(
+        synapse_list(0, 1, np.asarray([
             synapse("V", w_e, T_syn)
-        ))
+        ]))
     ])
 
     # adjacency matrix
     synapse_matrix = adj_matrix(neurons, synapses)
-
-    # simulate
+    synapse_matrix.simulate()
 
     # display input spikes
 
