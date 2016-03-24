@@ -5,9 +5,14 @@ import matplotlib.pyplot as plt
 
 # constants (time constants in mS)
 TO_MS = 1000; T_TO_POS = 10
+T_min = 10; T_cod = 100; T_max = T_min + T_cod # time range
+T_syn = 1; T_neu = 0.1 # std. delays (slightly modified T_neu)
+
+tau_m = 100 * TO_MS; tau_f = 20
 V_t = 10; V_reset = 0 # voltage model params
-w_e = V_t; w_i = -V_t # standardized synapse weights
-T_syn = 1; T_neu = 0.1 # standardized delays (slightly modified T_neu)
+w_e = V_t; w_i = -V_t # std. voltage weights
+g_mult = V_t * tau_m / tau_f
+w_acc = V_t * tau_m / T_max; w_bar_acc = V_t * tau_m / T_cod
 
 class synapse(object):
 
@@ -41,10 +46,9 @@ class neuron(object):
 
     def next_v(self, i): # compute voltage at pos i
 
-        # constants (time consts in mS; V consts in mV)
-        tau_m = 100 * TO_MS; tau_f = 20
+        # constants (time in mS; V in mV)
         dt = self.t[1] - self.t[0]
-        global V_t, V_reset
+        global V_t, V_reset, tau_m, tau_f
 
         if self.v[i-1] >= V_t:
             v_p = V_reset; ge_p = 0; gf_p = 0; gate_p = 0
@@ -130,12 +134,26 @@ def main(): # logarithm model
         ])),
         synapse_list(0, 2, np.asarray([
             synapse("V", 0.5 * w_e, T_syn)
+        ])),
+        synapse_list(1, 3, np.asarray([
+            synapse("g_e", w_bar_acc, T_syn + T_min)
+        ])),
+        synapse_list(2, 3, np.asarray([
+            synapse("g_e", -w_bar_acc, T_syn),
+            synapse("g_f", g_mult, T_syn),
+            synapse("gate", 1, T_syn)
+        ])),
+        synapse_list(2, 4, np.asarray([
+            synapse("V", w_e, 2 * T_syn)
+        ])),
+        synapse_list(3, 4, np.asarray([
+            synapse("V", w_e, T_syn + T_min)
         ]))
     ])
 
     # adjacency matrix
     synapse_matrix = adj_matrix(neurons, synapses)
-    synapse_matrix.simulate()
+    # synapse_matrix.simulate()
 
     # display input spikes
 
