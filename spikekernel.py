@@ -38,12 +38,6 @@ class neuron(object):
         self.g_f = np.zeros(np.shape(t))
         self.gate = np.zeros(np.shape(t))
 
-    def plot_v(self): #TBD
-        pass
-
-    def plot_spikes(self): #TBD
-        pass
-
     def next_v(self, i): # compute voltage at pos i
 
         # constants (time in mS; V in mV)
@@ -58,6 +52,8 @@ class neuron(object):
             gf_p = self.g_f[i-1]
             gate_p = self.gate[i-1]
 
+        self.g_e[i] = self.g_e[i] + ge_p
+        self.gate[i] = self.gate[i] + gate_p
         self.g_f[i] = self.g_f[i] + gf_p + dt * (-gf_p / tau_f)
         self.v[i] = self.v[i] + v_p + dt * ((ge_p + gf_p * gate_p) / tau_m)
 
@@ -81,17 +77,21 @@ class adj_matrix(object):
                 self.neurons[ni].next_v(tj)
                 if self.neurons[ni].v[tj] >= V_t:
 
+                    # for debugging
+                    print("spike: (neuron) " + str(ni) + ", (tj) " + str(tj))
+
                     # check adjacency matrix for synapses to send out
                     for n_to in range(0,self.neurons.size):
                         if self.synapse_matrix[ni][n_to] is not None:
                             for syn in self.synapse_matrix[ni][n_to].synapses:
                                 self.synapse_prop(syn, n_to, tj)
 
-                    # for debugging
-                    print("spike: (neuron) " + str(ni) + ", (tj) " + str(tj))
-
     def synapse_prop(self, syn, n_to, tj):
         global T_TO_POS
+
+        # for debugging
+        print(str(syn.s_type) + ", " + str(syn.s_weight) + ", " + str(syn.s_delay))
+
         if syn.s_type is "V":
             self.neurons[n_to].v[tj + int(T_TO_POS * syn.s_delay)] += syn.s_weight
         elif syn.s_type is "g_e":
@@ -106,11 +106,20 @@ class adj_matrix(object):
             else:
                 pass # throw error
 
+def plot_v(neurons): # can print no more than 9 neurons
+        plt.figure()
+        for i in range(neurons.size):
+            subplot_i = neurons.size * 100 + 10 + i + 1
+            plt.subplot(subplot_i)
+            plt.plot(neurons[i].t, neurons[i].v)
+            plt.xlabel('time (ms)')
+            plt.ylabel('voltage (mV)')
+        plt.show()
 
 def main(): # logarithm model
 
     # time frame
-    t = np.multiply(TO_MS, np.arange(0, 1.5, 1e-4)) # time in MS
+    t = np.multiply(TO_MS, np.arange(0, 2, 1e-4)) # time in MS
 
     # neurons
     input_neuron = neuron(t)
@@ -119,7 +128,7 @@ def main(): # logarithm model
     acc_neuron = neuron(t)
     output_neuron = neuron(t)
 
-    input_neuron.v[400] = V_t; input_neuron.v[800] = V_t
+    input_neuron.v[2000] = V_t; input_neuron.v[2700] = V_t
 
     neurons = np.asarray([input_neuron, first_neuron, last_neuron,
         acc_neuron, output_neuron])
@@ -153,10 +162,18 @@ def main(): # logarithm model
 
     # adjacency matrix
     synapse_matrix = adj_matrix(neurons, synapses)
-    # synapse_matrix.simulate()
+    synapse_matrix.simulate()
 
-    # display input spikes
+    # outputs
+    # for debugging: output to file
+    with open("output.txt", "a") as fp:
+        fp.truncate(0)
+        for i in range(t.size):
+            fp.write("(" + str(t[i]) + ", " + str(acc_neuron.v[i])
+                 + ", " + str(acc_neuron.g_e[i]) + ", " + str(acc_neuron.g_f[i])
+                 + ", " + str(acc_neuron.gate[i]) + ")\n")
+    plot_v(neurons) # display voltages
 
-    # display output spikes
+
 
 main()
