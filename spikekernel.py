@@ -219,9 +219,65 @@ def maximum(): # logarithm model
     # outputs
     plot_v(neurons) # display voltages
 
+def inverting_memory(): # logarithm model
+
+    # time frame
+    t = np.multiply(TO_MS, np.arange(0, 0.8, 1e-4)) # time in MS
+
+    # neurons
+    input_neuron = neuron("input", t)
+    first_neuron = neuron("first", t)
+    last_neuron = neuron("last", t)
+    acc_neuron = neuron("acc", t)
+    recall_neuron = neuron("recall", t)
+    output_neuron = neuron("output", t)
+
+    # setting input interval
+    input_neuron.v[2000] = V_t; input_neuron.v[2900] = V_t
+    recall_neuron.v[5000] = V_t;
+
+    neurons = np.asarray([input_neuron, first_neuron, last_neuron,
+        acc_neuron, recall_neuron, output_neuron])
+
+    # synapses
+    synapses = np.asarray([
+        synapse_list(0, 1, np.asarray([
+            synapse("V", w_e, T_syn)
+        ])),
+        synapse_list(1, 1, np.asarray([
+            synapse("V", w_i, T_syn)
+        ])),
+        synapse_list(0, 2, np.asarray([
+            synapse("V", 0.5 * w_e, T_syn)
+        ])),
+        synapse_list(1, 3, np.asarray([
+            synapse("g_e", w_acc, T_syn + T_min)
+        ])),
+        synapse_list(2, 3, np.asarray([
+            synapse("g_e", -w_acc, T_syn),
+        ])),
+        synapse_list(3, 5, np.asarray([
+            synapse("V", w_e, T_syn)
+        ])),
+        synapse_list(4, 3, np.asarray([
+            synapse("g_e", w_acc, T_syn)
+        ])),
+        synapse_list(4, 5, np.asarray([
+            synapse("V", w_e, 2 * T_syn)
+        ]))
+    ])
+
+    # adjacency matrix
+    synapse_matrix = adj_matrix(neurons, synapses)
+    synapse_matrix.simulate()
+
+    # outputs
+    plot_v(neurons) # display voltages
+
 def main():
 
-    logarithm()
+    # logarithm()
     maximum()
+    # inverting_memory()
 
 main()
