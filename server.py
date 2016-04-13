@@ -310,6 +310,61 @@ def non_inverting_memory(): # non-inverting memory
     # outputs
     plot_v(neurons) # display voltages
 
+def synchronizer(): # non-inverting memory
+
+    # time frame
+    t = np.multiply(TO_MS, np.arange(0, 0.8, 1e-4)) # time in MS
+
+    # neurons
+    neurons = np.asarray([neuron(label, t) for label in
+        ["input", "first", "last", "acc", "acc2", "recall",
+        "ready", "output"]])
+
+    # setting stimuli spikes
+    neurons[0].v[2000] = V_t; neurons[0].v[2200] = V_t
+    neurons[5].v[5000] = V_t
+
+    # synapses
+    synapses = np.asarray([
+        synapse_list(0, 1, np.asarray([
+            synapse("V", w_e, T_syn)
+        ])),
+        synapse_list(1, 1, np.asarray([
+            synapse("V", w_i, T_syn)
+        ])),
+        synapse_list(0, 2, np.asarray([
+            synapse("V", 0.5 * w_e, T_syn)
+        ])),
+        synapse_list(1, 3, np.asarray([
+            synapse("g_e", w_acc, T_syn)
+        ])),
+        synapse_list(3, 4, np.asarray([
+            synapse("g_e", -w_acc, T_syn)
+        ])),
+        synapse_list(2, 4, np.asarray([
+            synapse("g_e", w_acc, T_syn)
+        ])),
+        synapse_list(3, 6, np.asarray([
+            synapse("V", w_e, T_syn)
+        ])),
+        synapse_list(5, 4, np.asarray([
+            synapse("g_e", w_acc, T_syn)
+        ])),
+        synapse_list(5, 7, np.asarray([
+            synapse("V", w_e, T_syn)
+        ])),
+        synapse_list(4, 7, np.asarray([
+            synapse("V", w_e, T_syn)
+        ]))
+    ])
+
+    # adjacency matrix
+    synapse_matrix = adj_matrix(neurons, synapses)
+    synapse_matrix.simulate()
+
+    # outputs
+    plot_v(neurons) # display voltages
+
 def main(): # run all models
 
     # logarithm()
