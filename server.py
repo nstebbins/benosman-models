@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import socket, threading
+import spikekernel
 
 class client_thread(threading.Thread):
 
@@ -11,6 +12,10 @@ class client_thread(threading.Thread):
         self.socket = socket
         print("[+] new thread started for " + ip + ":" + str(port))
 
+    def parse_message(self, input):
+        translation_table = dict.fromkeys(map(ord, '\n'), None)
+        return(input.decode('ascii').translate(translation_table))
+
     def run(self):
 
         print("connection from: " + ip + ":" + str(port))
@@ -19,11 +24,12 @@ class client_thread(threading.Thread):
         data = "dummydata" # @debug: can also configure do-while
 
         while len(data) > 0:
-            data = self.socket.recv(2048)
-            print("client sent: " + str(data))
-            print("length of data client sent" + str(len(data)))
-            message = "you sent me: ".encode()
-            self.socket.send(message + data)
+            data = self.parse_message(self.socket.recv(2048))
+            print("[received from client]: " + data)
+
+            output_index, neurons = getattr(spikekernel, data)()
+
+            self.socket.send(str(neurons[output_index].v))
 
         print("client disconnected...")
 

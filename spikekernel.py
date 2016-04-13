@@ -215,6 +215,7 @@ def inverting_memory(): # logarithm model
     # neurons
     neurons = np.asarray([neuron(label, t) for label in
         ["input", "first", "last", "acc", "recall", "output"]])
+    output_index = 5
 
     # setting stimuli spikes
     neurons[0].v[2000] = V_t; neurons[0].v[2900] = V_t
@@ -252,8 +253,12 @@ def inverting_memory(): # logarithm model
     synapse_matrix = adj_matrix(neurons, synapses)
     synapse_matrix.simulate()
 
+    print("[finished]")
+
     # outputs
-    plot_v(neurons) # display voltages
+    # plot_v(neurons) # display voltages
+
+    return((5, neurons))
 
 def non_inverting_memory(): # non-inverting memory
 
@@ -365,11 +370,9 @@ def synchronizer(): # non-inverting memory
     # outputs
     plot_v(neurons) # display voltages
 
-def main(): # run all models
+# def main(): # run all models
 
     # logarithm()
     # maximum()
     # inverting_memory()
-    non_inverting_memory()
-
-main()
+    # non_inverting_memory()
