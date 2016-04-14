@@ -12,15 +12,14 @@ class client_thread(threading.Thread):
         self.socket = socket
         print("[+] new thread started for " + ip + ":" + str(port))
 
-    def parse_message(self, input):
+    def parse_message(self, input): # binary to string to (string, dict)
 
-        # convert from binary to string
         translation_table = dict.fromkeys(map(ord, '\n'), None)
         input_str = input.decode('ascii').translate(translation_table)
 
-        # convert from string to function call representation
         # e.g. INVERTING_MEMORY;INPUT 2000 INPUT 2900 RECALL 5000
         f_specs = input_str.split(";")
+        print(f_specs)
         f_name = f_specs[0]; f_inputs = f_specs[1]
 
         f_inputs = [x.encode('UTF8') for x in f_inputs.split(" ")]
@@ -37,17 +36,17 @@ class client_thread(threading.Thread):
     def run(self):
 
         print("[connection from]: " + ip + ":" + str(port))
-
         data = "dummydata" # @debug: can also configure do-while
 
-        while len(data) > 0:
-            f_name, data = self.parse_message(self.socket.recv(2048))
+        while True:
+            rcv = self.socket.recv(2048)
+            if len(rcv):
+                f_name, data = self.parse_message(rcv)
 
-            # output_index, neurons = getattr(spikekernel, f_name)(f_inputs)
+                # output_index, neurons = getattr(spikekernel, f_name)(f_inputs)
+                # self.socket.send(str(neurons[output_index].v))
 
-            # self.socket.send(str(neurons[output_index].v))
-
-            if len(data) <= 0:
+            else:
                 break
 
         print("client disconnected...")
