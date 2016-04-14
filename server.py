@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import socket, threading
+import socket, threading, pickle
 import spikekernel
 
 class client_thread(threading.Thread):
@@ -19,7 +19,6 @@ class client_thread(threading.Thread):
 
         # e.g. INVERTING_MEMORY;INPUT 2000 INPUT 2900 RECALL 5000
         f_specs = input_str.split(";")
-        print(f_specs)
         f_name = f_specs[0]; f_inputs = f_specs[1]
 
         f_inputs = [x.encode('UTF8') for x in f_inputs.split(" ")]
@@ -29,7 +28,7 @@ class client_thread(threading.Thread):
             if f_inputs[i] in data:
                 (data[f_inputs[i]]).append(int(f_inputs[i+1]))
             else:
-                data[f_inputs[i]] = [f_inputs[i+1]]
+                data[f_inputs[i]] = [int(f_inputs[i+1])]
 
         return((f_name, data))
 
@@ -42,10 +41,8 @@ class client_thread(threading.Thread):
             rcv = self.socket.recv(2048)
             if len(rcv):
                 f_name, data = self.parse_message(rcv)
-
-                # output_index, neurons = getattr(spikekernel, f_name)(f_inputs)
-                # self.socket.send(str(neurons[output_index].v))
-
+                output_index, neurons = getattr(spikekernel, f_name)(data)
+                self.socket.send(pickle.dumps(neurons[output_index].v))
             else:
                 break
 
