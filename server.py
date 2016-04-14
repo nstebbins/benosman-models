@@ -13,28 +13,47 @@ class client_thread(threading.Thread):
         print("[+] new thread started for " + ip + ":" + str(port))
 
     def parse_message(self, input):
+
+        # convert from binary to string
         translation_table = dict.fromkeys(map(ord, '\n'), None)
-        return(input.decode('ascii').translate(translation_table))
+        input_str = input.decode('ascii').translate(translation_table)
+
+        # convert from string to function call representation
+        # e.g. INVERTING_MEMORY;INPUT 2000 INPUT 2900 RECALL 5000
+        f_specs = input_str.split(";")
+        f_name = f_specs[0]; f_inputs = f_specs[1]
+
+        f_inputs = [x.encode('UTF8') for x in f_inputs.split(" ")]
+        data = {}
+
+        for i in range(0, len(f_inputs), 2):
+            if f_inputs[i] in data:
+                (data[f_inputs[i]]).append(int(f_inputs[i+1]))
+            else:
+                data[f_inputs[i]] = [f_inputs[i+1]]
+
+        return((f_name, data))
 
     def run(self):
 
-        print("connection from: " + ip + ":" + str(port))
-        message = "\nwelcome to the server\n\n"
-        self.socket.send(message.encode())
+        print("[connection from]: " + ip + ":" + str(port))
+
         data = "dummydata" # @debug: can also configure do-while
 
         while len(data) > 0:
-            data = self.parse_message(self.socket.recv(2048))
-            print("[received from client]: " + data)
+            f_name, data = self.parse_message(self.socket.recv(2048))
 
-            output_index, neurons = getattr(spikekernel, data)()
+            # output_index, neurons = getattr(spikekernel, f_name)(f_inputs)
 
-            self.socket.send(str(neurons[output_index].v))
+            # self.socket.send(str(neurons[output_index].v))
+
+            if len(data) <= 0:
+                break
 
         print("client disconnected...")
 
 host = "0.0.0.0"
-port = 7000
+port = 8000
 
 tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

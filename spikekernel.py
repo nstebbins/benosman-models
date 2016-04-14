@@ -207,19 +207,27 @@ def maximum(): # logarithm model
     # outputs
     plot_v(neurons) # display voltages
 
-def inverting_memory(): # logarithm model
+def inverting_memory(f_inputs = {}): # logarithm model
 
     # time frame
     t = np.multiply(TO_MS, np.arange(0, 0.8, 1e-4)) # time in MS
 
     # neurons
-    neurons = np.asarray([neuron(label, t) for label in
-        ["input", "first", "last", "acc", "recall", "output"]])
+    neuron_names = ["input", "first", "last", "acc", "recall", "output"]
+    neurons = np.asarray([neuron(label, t) for label in neuron_names])
     output_index = 5
 
     # setting stimuli spikes
-    neurons[0].v[2000] = V_t; neurons[0].v[2900] = V_t
-    neurons[4].v[5000] = V_t
+    # neurons[0].v[2000] = V_t; neurons[0].v[2900] = V_t
+    # neurons[4].v[5000] = V_t
+
+    for key,value in f_inputs.items():
+        print(key + ", " + value)
+        for j in list(value):
+            idx = neuron_names.index(i)
+            neurons[idx].v[j] = V_t
+
+    print(neurons[0].v[2000])
 
     # synapses
     synapses = np.asarray([
@@ -252,8 +260,6 @@ def inverting_memory(): # logarithm model
     # adjacency matrix
     synapse_matrix = adj_matrix(neurons, synapses)
     synapse_matrix.simulate()
-
-    print("[finished]")
 
     # outputs
     # plot_v(neurons) # display voltages
