@@ -11,13 +11,19 @@ def main():
     tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     tcpsock.connect((host, port))
 
-    # send parameters
-    message = "inverting_memory;input 2000 input 2900 recall 5000"
-    tcp.send_msg(tcpsock, message.encode('ascii', 'ignore'))
+    messages = [
+        "inverting_memory;input 2000 input 2900 recall 5000",
+        "logarithm;input 2000 input 2700",
+        "maximum;input 2000 input 2700 input2 2000 input2 3500",
+        "non_inverting_memory;input 2000 input 2200 recall 5000"]
 
-    # receive output voltage (as a numpy array)
-    output_neuron = pickle.loads(tcp.recv_msg(tcpsock))
-    spikekernel.plot_v(np.asarray([output_neuron]))
+    for message in messages:
+        # send message
+        tcp.send_msg(tcpsock, message.encode('ascii', 'ignore'))
+
+        # receive message
+        output_neuron = pickle.loads(tcp.recv_msg(tcpsock))
+        spikekernel.plot_v(np.asarray([output_neuron]))
 
     tcpsock.close()
 
