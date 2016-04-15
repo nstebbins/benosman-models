@@ -16,9 +16,7 @@ class client_thread(threading.Thread):
 
         # e.g. INVERTING_MEMORY;INPUT 2000 INPUT 2900 RECALL 5000
         f_specs = input_str.split(";")
-        f_name = f_specs[0]; f_inputs = f_specs[1]
-
-        f_inputs = f_inputs.split(" ")
+        f_name = f_specs[0]; f_inputs = f_specs[1].split(" ")
         data = {}
 
         for i in range(0, len(f_inputs), 2):
@@ -38,7 +36,7 @@ class client_thread(threading.Thread):
             rcv = tcp.recv_msg(self.socket)
             if rcv:
                 f_name, data = self.parse_message(rcv)
-                output_index, neurons = getattr(spikekernel, f_name)(data)
+                output_index, neurons = spikekernel.simulate_neurons(f_name, data)
                 tcp.send_msg(self.socket, pickle.dumps(neurons[output_index],
                     protocol = 0))
 
