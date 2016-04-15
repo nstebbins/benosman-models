@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import socket, threading, pickle
-import spikekernel
+import spikekernel, tcp
 
 class client_thread(threading.Thread):
 
@@ -38,11 +38,13 @@ class client_thread(threading.Thread):
         data = "dummydata" # @debug: can also configure do-while
 
         while True:
-            rcv = self.socket.recv(2048)
-            if len(rcv):
+            rcv = tcp.recv_msg(self.socket)
+            if rcv:
                 f_name, data = self.parse_message(rcv)
                 output_index, neurons = getattr(spikekernel, f_name)(data)
-                self.socket.send(pickle.dumps(neurons[output_index].v))
+                tcp.send_msg(self.socket, pickle.dumps(neurons[output_index].v,
+                    protocol = 0))
+
             else:
                 break
 
