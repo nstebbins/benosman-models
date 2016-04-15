@@ -1,6 +1,6 @@
-#!/usr/bin/python
-
-import socket, pickle, tcp
+import numpy as np
+import socket, pickle
+import spikekernel, tcp
 
 def main():
 
@@ -13,11 +13,11 @@ def main():
 
     # send parameters
     message = "inverting_memory;input 2000 input 2900 recall 5000"
-    tcp.send_msg(tcpsock, message.encode())
+    tcp.send_msg(tcpsock, message.encode('ascii', 'ignore'))
 
     # receive output voltage (as a numpy array)
-    output_v = pickle.loads(tcp.recv_msg(tcpsock))
-    print(repr(output_v))
+    output_neuron = pickle.loads(tcp.recv_msg(tcpsock))
+    spikekernel.plot_v(np.asarray([output_neuron]))
 
     tcpsock.close()
 

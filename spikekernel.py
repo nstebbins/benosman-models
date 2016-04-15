@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -103,12 +101,12 @@ class adj_matrix(object):
 
 def plot_v(neurons):
 
-    f, axarr = plt.subplots(neurons.size, 1, figsize=(15,10))
+    f, axarr = plt.subplots(neurons.size, 1, figsize=(15,10), squeeze=False)
     for i in range(neurons.size):
-        axarr[i].plot(neurons[i].t, neurons[i].v)
-        axarr[i].set_title('voltage for ' + neurons[i].ID)
-    plt.setp([a.get_xticklabels() for a in axarr[:]], visible = False)
-    plt.setp([axarr[neurons.size - 1].get_xticklabels()], visible = True)
+        axarr[i,0].plot(neurons[i].t, neurons[i].v)
+        axarr[i,0].set_title('voltage for ' + neurons[i].ID)
+    plt.setp([a.get_xticklabels() for a in axarr[:,0]], visible = False)
+    plt.setp([axarr[neurons.size - 1,0].get_xticklabels()], visible = True)
     plt.show()
 
 def inspect_neuron(neuron):

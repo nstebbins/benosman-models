@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import socket, struct
 
 def send_msg(sock, msg):
@@ -18,7 +16,7 @@ def recv_msg(sock):
 
 def recvall(sock, n):
     # helper function to recv n bytes or return None if EOF is hit
-    data = ''.encode('ascii')
+    data = ''.encode('utf-8', 'ignore')
     while len(data) < n:
         packet = sock.recv(n - len(data))
         if not packet:
