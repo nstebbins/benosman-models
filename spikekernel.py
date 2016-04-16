@@ -58,14 +58,16 @@ class neuron(object):
 
 class adj_matrix(object):
 
-    def __init__(self, neurons, synapses):
+    def __init__(self, neurons, synapses, neuron_names):
         self.neurons = neurons
+        self.neuron_names = neuron_names
         self.synapse_matrix = np.empty((neurons.size, neurons.size),
-            dtype=object)
+            dtype = object)
 
         # fill in synapse matrix
         for synapse_list in synapses:
-            i = synapse_list.n_from; j = synapse_list.n_to
+            i = self.neuron_names.index(synapse_list.n_from)
+            j = self.neuron_names.index(synapse_list.n_to)
             self.synapse_matrix[i][j] = synapse_list
 
     def simulate(self): # update voltages for neurons
@@ -134,27 +136,27 @@ def simulate_neurons(f_name, data = {}):
             "t" : 0.5,
             "neuron_names" : ["input", "first", "last", "acc", "output"],
             "synapses" : np.asarray([
-                synapse_list(0, 1, np.asarray([
+                synapse_list("input", "first", np.asarray([
                     synapse("V", w_e, T_syn)
                 ])),
-                synapse_list(1, 1, np.asarray([
+                synapse_list("first", "first", np.asarray([
                     synapse("V", w_i, T_syn)
                 ])),
-                synapse_list(0, 2, np.asarray([
+                synapse_list("input", "last", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn)
                 ])),
-                synapse_list(1, 3, np.asarray([
+                synapse_list("first", "acc", np.asarray([
                     synapse("g_e", w_bar_acc, T_syn + T_min)
                 ])),
-                synapse_list(2, 3, np.asarray([
+                synapse_list("last", "acc", np.asarray([
                     synapse("g_e", -w_bar_acc, T_syn),
                     synapse("g_f", g_mult, T_syn),
                     synapse("gate", 1, T_syn)
                 ])),
-                synapse_list(2, 4, np.asarray([
+                synapse_list("last", "output", np.asarray([
                     synapse("V", w_e, 2 * T_syn)
                 ])),
-                synapse_list(3, 4, np.asarray([
+                synapse_list("acc", "output", np.asarray([
                     synapse("V", w_e, T_syn + T_min)
                 ]))
             ]),
@@ -164,22 +166,22 @@ def simulate_neurons(f_name, data = {}):
             "t" : 1,
             "neuron_names" : ["input", "input2", "larger1", "larger2", "output"],
             "synapses" : np.asarray([
-                synapse_list(0, 3, np.asarray([
+                synapse_list("input", "larger2", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn)
                 ])),
-                synapse_list(0, 4, np.asarray([
+                synapse_list("input", "output", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn)
                 ])),
-                synapse_list(1, 4, np.asarray([
+                synapse_list("input2", "output", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn)
                 ])),
-                synapse_list(1, 2, np.asarray([
+                synapse_list("input2", "larger1", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn + T_min)
                 ])),
-                synapse_list(2, 3, np.asarray([
+                synapse_list("larger1", "larger2", np.asarray([
                     synapse("V", w_i, T_syn),
                 ])),
-                synapse_list(3, 2, np.asarray([
+                synapse_list("larger2", "larger1", np.asarray([
                     synapse("V", w_i, T_syn)
                 ]))
             ]),
@@ -187,30 +189,31 @@ def simulate_neurons(f_name, data = {}):
         },
         "inverting_memory" : {
             "t" : 0.8,
-            "neuron_names" : ["input", "first", "last", "acc", "recall", "output"],
+            "neuron_names" : ["input", "first", "last", "acc",
+                "recall", "output"],
             "synapses" : np.asarray([
-                synapse_list(0, 1, np.asarray([
+                synapse_list("input", "first", np.asarray([
                     synapse("V", w_e, T_syn)
                 ])),
-                synapse_list(1, 1, np.asarray([
+                synapse_list("first", "first", np.asarray([
                     synapse("V", w_i, T_syn)
                 ])),
-                synapse_list(0, 2, np.asarray([
+                synapse_list("input", "last", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn)
                 ])),
-                synapse_list(1, 3, np.asarray([
+                synapse_list("first", "acc", np.asarray([
                     synapse("g_e", w_acc, T_syn + T_min)
                 ])),
-                synapse_list(2, 3, np.asarray([
+                synapse_list("last", "acc", np.asarray([
                     synapse("g_e", -w_acc, T_syn),
                 ])),
-                synapse_list(3, 5, np.asarray([
+                synapse_list("acc", "output", np.asarray([
                     synapse("V", w_e, T_syn)
                 ])),
-                synapse_list(4, 3, np.asarray([
+                synapse_list("recall", "acc", np.asarray([
                     synapse("g_e", w_acc, T_syn)
                 ])),
-                synapse_list(4, 5, np.asarray([
+                synapse_list("recall", "output", np.asarray([
                     synapse("V", w_e, 2 * T_syn)
                 ]))
             ]),
@@ -218,37 +221,37 @@ def simulate_neurons(f_name, data = {}):
         },
         "non_inverting_memory" : {
             "t" : 0.8,
-            "neuron_names" : ["input", "first", "last", "acc", "acc2", "recall",
-            "ready", "output"],
+            "neuron_names" : ["input", "first", "last", "acc", "acc2",
+            "recall", "ready", "output"],
             "synapses" : np.asarray([
-                synapse_list(0, 1, np.asarray([
+                synapse_list("input", "first", np.asarray([
                     synapse("V", w_e, T_syn)
                 ])),
-                synapse_list(1, 1, np.asarray([
+                synapse_list("first", "first", np.asarray([
                     synapse("V", w_i, T_syn)
                 ])),
-                synapse_list(0, 2, np.asarray([
+                synapse_list("input", "last", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn)
                 ])),
-                synapse_list(1, 3, np.asarray([
+                synapse_list("first", "acc", np.asarray([
                     synapse("g_e", w_acc, T_syn)
                 ])),
-                synapse_list(3, 4, np.asarray([
+                synapse_list("acc", "acc2", np.asarray([
                     synapse("g_e", -w_acc, T_syn)
                 ])),
-                synapse_list(2, 4, np.asarray([
+                synapse_list("last", "acc2", np.asarray([
                     synapse("g_e", w_acc, T_syn)
                 ])),
-                synapse_list(3, 6, np.asarray([
+                synapse_list("acc", "ready", np.asarray([
                     synapse("V", w_e, T_syn)
                 ])),
-                synapse_list(5, 4, np.asarray([
+                synapse_list("recall", "acc2", np.asarray([
                     synapse("g_e", w_acc, T_syn)
                 ])),
-                synapse_list(5, 7, np.asarray([
+                synapse_list("recall", "output", np.asarray([
                     synapse("V", w_e, T_syn)
                 ])),
-                synapse_list(4, 7, np.asarray([
+                synapse_list("acc2", "output", np.asarray([
                     synapse("V", w_e, T_syn)
                 ]))
             ]),
@@ -266,7 +269,7 @@ def simulate_neurons(f_name, data = {}):
         f_p["neuron_names"], data, t)
 
     # adjacency matrix
-    synapse_matrix = adj_matrix(neurons, f_p["synapses"])
+    synapse_matrix = adj_matrix(neurons, f_p["synapses"], f_p["neuron_names"])
     synapse_matrix.simulate()
 
     return((f_p["output_idx"], neurons))
