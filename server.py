@@ -1,5 +1,6 @@
 import socket, threading, pickle
 import spikekernel, tcp
+import numpy as np
 
 class client_thread(threading.Thread):
 
@@ -36,9 +37,9 @@ class client_thread(threading.Thread):
             rcv = tcp.recv_msg(self.socket)
             if rcv:
                 f_name, data = self.parse_message(rcv)
-                output_index, neurons = spikekernel.simulate_neurons(f_name, data)
-                tcp.send_msg(self.socket, pickle.dumps(neurons[output_index],
-                    protocol = 0))
+                outputs, neurons = spikekernel.simulate_neurons(f_name, data)
+                tcp.send_msg(self.socket,
+                    pickle.dumps(np.take(neurons, outputs), protocol = 0))
 
             else:
                 break

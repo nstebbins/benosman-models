@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 
 # constants (time constants in mS)
@@ -21,10 +22,25 @@ class synapse(object):
 
 class synapse_list(object):
 
-    def __init__(self, n_from, n_to, synapses):
+    def __init__(self, n_from, n_to, synapses, syntype = None):
         self.n_from = n_from
         self.n_to = n_to
         self.synapses = synapses
+
+        '''
+            syntype //
+            - specifies whether a connection is
+                (1) within the overall network
+                (2) from overall network to subnetwork
+                (3) within subnetwork
+                (4) from subnetwork to overall network
+            - this is used when augmenting the adjacency matrix with subnets
+        '''
+
+        if syntype is None:
+            self.syntype = 1
+        else:
+            self.syntype = syntype
 
 class neuron(object):
 
@@ -160,7 +176,7 @@ def simulate_neurons(f_name, data = {}):
                     synapse("V", w_e, T_syn + T_min)
                 ]))
             ]),
-            "output_idx" : 4
+            "output_idx" : [4]
         },
         "maximum" : {
             "t" : 1,
@@ -185,7 +201,7 @@ def simulate_neurons(f_name, data = {}):
                     synapse("V", w_i, T_syn)
                 ]))
             ]),
-            "output_idx" : 4
+            "output_idx" : [4]
         },
         "inverting_memory" : {
             "t" : 0.8,
@@ -217,7 +233,7 @@ def simulate_neurons(f_name, data = {}):
                     synapse("V", w_e, 2 * T_syn)
                 ]))
             ]),
-            "output_idx" : 5
+            "output_idx" : [5]
         },
         "non_inverting_memory" : {
             "t" : 0.8,
@@ -255,21 +271,79 @@ def simulate_neurons(f_name, data = {}):
                     synapse("V", w_e, T_syn)
                 ]))
             ]),
-            "output_idx" : 7
+            "output_idx" : [7]
+        },
+        "synchronizer" : {
+            "t" : 1,
+            "neuron_names" : ["input0", "input1", "output0", "output1", "sync"],
+            "synapses" : np.asarray([]),
+            "output_idx" : [2, 3],
+            "subnets" : [{
+                "name" : "inverting_memory",
+                "n" : 2,
+                "synapses" : np.asarray([
+                    synapse_list("input", "input", np.asarray([
+                        synapse("V", w_e, T_syn)
+                    ]), 2),
+                    synapse_list("output", "output", np.asarray([
+                        synapse("V", w_e, T_syn)
+                    ]), 4),
+                    synapse_list("sync", "recall", np.asarray([
+                        synapse("V", w_e, T_syn)
+                    ]), 2),
+                    synapse_list("ready", "sync", np.asarray([
+                        synapse("V", 0.5 * w_e, T_syn)
+                    ]), 4)
+                ])
+            }]
         }
     }
 
     f_p = functions[f_name] # parameters
 
-    # time frame
+    # time frame & neurons
     t = np.multiply(TO_MS, np.arange(0, f_p["t"], 1e-4)) # time in MS
-
-    # neurons
     neurons = initialize_neurons(
         f_p["neuron_names"], data, t)
 
     # adjacency matrix
-    synapse_matrix = adj_matrix(neurons, f_p["synapses"], f_p["neuron_names"])
-    synapse_matrix.simulate()
+    syn_matrix = adj_matrix(neurons, f_p["synapses"], f_p["neuron_names"])
+
+    # handle subnets (augment adjacency matrix)
+    if "subnets" in f_p:
+        print("[subnets present]...")
+        for subnet_type in f_p["subnets"]: # each network type
+            print("[each subnet]...")
+            subnet_neuron_names = functions[subnet_type["name"]]["neuron_names"]
+            to_add = len(subnet_neuron_names)
+
+            for subnet in range(subnet_type["n"]): # each network for the network type
+
+                offset = int(math.sqrt((syn_matrix.synapse_matrix).size))
+                aug_dim = to_add + offset
+
+                # initialize augmented matrix
+                aug_matrix = np.empty((aug_dim, aug_dim), dtype = object)
+                aug_matrix[:offset, :offset] = syn_matrix.synapse_matrix
+
+                # iterate over synapses & add them to the preexisting adjacency matrix
+                for synlist in subnet_type["synapses"]:
+                    if synlist.syntype == 1:
+                        pass
+                    elif synlist.syntype == 2:
+                        i = f_p["neuron_names"].index(synapse_list.n_from + str(subnet))
+                        j = offset + subnet_neuron_names.index(synapse_list.n_to)
+                    elif synlist.syntype == 3:
+                        i = offset + subnet_neuron_names.index(synapse_list.n_from)
+                        j = offset + subnet_neuron_names.index(synapse_list.n_to)
+                    else:
+                        i = offset + subnet_neuron_names.index(synapse_list.n_from)
+                        j = f_p["neuron_names"].index(synapse_list.n_to + str(subnet))
+
+                    aug_matrix[i][j] = synlist
+
+                syn_matrix.synapse_matrix = aug_matrix
+
+    syn_matrix.simulate()
 
     return((f_p["output_idx"], neurons))
