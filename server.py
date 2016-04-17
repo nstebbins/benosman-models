@@ -30,8 +30,7 @@ class client_thread(threading.Thread):
 
     def run(self):
 
-        print("[connection from]: " + self.ip + ":" + str(self.port))
-        data = "dummydata" # @debug: can also configure do-while
+        print("[client connected]> " + self.ip + ":" + str(self.port))
 
         while True:
             rcv = tcp.recv_msg(self.socket)
@@ -43,7 +42,7 @@ class client_thread(threading.Thread):
             else:
                 break
 
-        print("client disconnected...")
+        print("[client disconnected]> " + self.ip + ":" + str(self.port))
 
 def main():
     host = "0.0.0.0"
@@ -61,7 +60,6 @@ def main():
     tcpsock.listen(4) # arg: max # of queued connections allowed
 
     while True: # server keeps running
-        print("\nlistening for incoming connections...")
         (clientsock, (ip, port)) = tcpsock.accept()
         newthread = client_thread(ip, port, clientsock)
         newthread.start() # start thread to handle client

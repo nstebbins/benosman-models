@@ -93,16 +93,9 @@ class adj_matrix(object):
             for ni in range(self.neurons.size):
                 self.neurons[ni].next_v(tj)
                 if self.neurons[ni].v[tj] >= V_t:
-
-                    print("[synapse!]... at [neuron] " + str(ni))
-
                     # check adjacency matrix for synapses to send out
-                    print("size of neurons: " + str(self.neurons.size))
-
                     for n_to in range(0,self.neurons.size):
                         if self.synapse_matrix[ni][n_to] is not None:
-                            print("[propagating to!]... at [neuron] "
-                                + str(n_to))
                             for syn in self.synapse_matrix[ni][n_to].synapses:
                                 self.synapse_prop(syn, n_to, tj)
 
@@ -146,11 +139,8 @@ def initialize_neurons(neuron_names, t, data = None):
 
     # setting stimuli spikes
     if data is not None:
-        print("[initializing neurons]...")
         for key, value in data.items(): # for each neuron
-            print("key: " + key + ", value: " + str(value))
             for j in list(value):
-                print("[updating neuron]... [value]: " + str(j))
                 neurons[neuron_names.index(key)].v[j] = V_t
 
     return(neurons)
@@ -287,7 +277,7 @@ def simulate_neurons(f_name, data = {}):
             "t" : 1,
             "neuron_names" : ["input0", "input1", "output0", "output1", "_sync"],
             "synapses" : np.asarray([]),
-            "output_idx" : np.arange(20),
+            "output_idx" : [2, 3],
             "subnets" : [{
                 "name" : "non_inverting_memory",
                 "n" : 2,
@@ -331,7 +321,6 @@ def simulate_neurons(f_name, data = {}):
                     subnet_name + str(subnet) for subnet_name in subnet_names]
 
                 offset = int(math.sqrt((syn_matrix.synapse_matrix).size))
-                print("[offset]..." + str(offset))
                 aug_dim = to_add + offset
 
                 # neurons
@@ -380,13 +369,5 @@ def simulate_neurons(f_name, data = {}):
                 syn_matrix.synapse_matrix = aug_matrix
 
     syn_matrix.simulate()
-
-    print(np.nonzero(syn_matrix.synapse_matrix))
-
-    '''
-    print(str([[i for i, j in enumerate(c)
-        if j is not None] for c in zip(*syn_matrix.synapse_matrix)]))
-    print("neuron names: " + str(syn_matrix.neuron_names))
-    '''
 
     return((f_p["output_idx"], neurons))
