@@ -40,7 +40,6 @@ class client_thread(threading.Thread):
                 outputs, neurons = spikekernel.simulate_neurons(f_name, data)
                 tcp.send_msg(self.socket,
                     pickle.dumps(np.take(neurons, outputs), protocol = 0))
-
             else:
                 break
 
