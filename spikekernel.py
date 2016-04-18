@@ -296,6 +296,73 @@ def simulate_neurons(f_name, data = {}):
                     ]), 4)
                 ])
             }]
+        },
+        "full_subtractor" : {
+            "t" : 1,
+            "neuron_names" : ["input1", "input2", "zero", "sync1",
+                "sync2", "inb1", "inb2", "output_plus", "output_minus"],
+            "output_idx" : [0, 1, 7, 8],
+            "synapses" : np.asarray([
+                synapse_list("input1", "sync1", np.asarray([
+                    synapse("V", 0.5 * w_e, T_syn)
+                ])),
+                synapse_list("input2", "sync2", np.asarray([
+                    synapse("V", 0.5 * w_e, T_syn)
+                ])),
+                synapse_list("sync1", "zero", np.asarray([
+                    synapse("V", w_e, T_neu),
+                    synapse("V", w_i, 2 * T_neu)
+                ])),
+                synapse_list("sync1", "output_plus", np.asarray([
+                    synapse("V", w_e, T_min + 3 * T_syn + 2 * T_neu)
+                ])),
+                synapse_list("sync1", "inb1", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ])),
+                synapse_list("sync1", "output_minus", np.asarray([
+                    synapse("V", w_e, 3 * T_syn + 2 * T_neu)
+                ])),
+                synapse_list("sync1", "inb2", np.asarray([
+                    synapse("V", w_i, T_syn)
+                ])),
+                synapse_list("sync2", "zero", np.asarray([
+                    synapse("V", w_e, T_neu),
+                    synapse("V", w_i, 2 * T_neu)
+                ])),
+                synapse_list("sync2", "inb1", np.asarray([
+                    synapse("V", w_i, T_syn)
+                ])),
+                synapse_list("sync2", "output_plus", np.asarray([
+                    synapse("V", w_e, 3 * T_syn + 2 * T_neu)
+                ])),
+                synapse_list("sync2", "inb2", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ])),
+                synapse_list("sync2", "output_minus", np.asarray([
+                    synapse("V", w_e, T_min + 3 * T_syn + 2 * T_neu)
+                ])),
+                synapse_list("zero", "zero", np.asarray([
+                    synapse("V", w_e, T_neu)
+                ])),
+                synapse_list("zero", "inb2", np.asarray([
+                    synapse("V", w_i, T_neu)
+                ])),
+                synapse_list("zero", "output_minus", np.asarray([
+                    synapse("V", 2 * w_i, T_neu)
+                ])),
+                synapse_list("inb1", "output_plus", np.asarray([
+                    synapse("V", 2 * w_i, T_syn)
+                ])),
+                synapse_list("inb2", "output_minus", np.asarray([
+                    synapse("V", 2 * w_i, T_syn)
+                ])),
+                synapse_list("output_plus", "inb2", np.asarray([
+                    synapse("V", 0.5 * w_e, T_syn)
+                ])),
+                synapse_list("output_minus", "inb1", np.asarray([
+                    synapse("V", 0.5 * w_e, T_syn)
+                ]))
+            ])
         }
     }
 

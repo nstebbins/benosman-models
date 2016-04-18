@@ -12,12 +12,18 @@ def main():
     tcpsock.connect((host, port))
 
     messages = [
+        "full_subtractor;input1 2000 input1 2900 input2 2000 input2 2400"
+    ]
+
+    '''
+    messages = [
         "inverting_memory;input 2000 input 2900 recall 5000",
         "logarithm;input 2000 input 2700",
-        "maximum;input 2000 input 2700 input2 2000 input2 3500",
+        "maximum;input 2000 input 2400 input2 2000 input2 2900",
         "non_inverting_memory;input 2000 input 2200 recall 5000",
         "synchronizer;input0 1000 input0 1600 input1 2000 input1 2700"
     ]
+    '''
 
 
     for message in messages:
