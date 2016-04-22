@@ -363,6 +363,82 @@ def simulate_neurons(f_name, data = {}):
                     synapse("V", 0.5 * w_e, T_syn)
                 ]))
             ])
+        },
+        "linear_combination" : {
+            "t" : 1,
+            "neuron_names" : ["input0+", "input0-", "input1+", "input1-",
+                "input0+first", "input0+last", "input0-first", "input0-last",
+                "input1+first", "input1+last", "input1-first", "input1-last",
+                "sync", "acc1+", "acc1-", "acc2+", "acc2-", "inter+", "inter-",
+                "output+", "output-"
+            ],
+            "output_idx" : [19, 20],
+            "synapses" : np.asarray([
+                synapse_list("input0+", "input0+first", np.asarray([
+
+                ])),
+                synapse_list("input0+", "input0+last", np.asarray([
+
+                ])),
+                synapse_list("input0-", "input0-first", np.asarray([
+
+                ])),
+                synapse_list("input0-", "input0-last", np.asarray([
+
+                ])),
+                synapse_list("input1+", "input1+first", np.asarray([
+
+                ])),
+                synapse_list("input1+", "input1+last", np.asarray([
+
+                ])),
+                synapse_list("input1-", "input1-first", np.asarray([
+
+                ])),
+                synapse_list("input1-", "input1-last", np.asarray([
+
+                ])),
+                synapse_list("input0+last", "sync", np.asarray([
+
+                ])),
+                synapse_list("input0-last", "sync", np.asarray([
+
+                ])),
+                synapse_list("input1+last", "sync", np.asarray([
+
+                ])),
+                synapse_list("input1-last", "sync", np.asarray([
+
+                ])),
+                synapse_list("sync", "acc1+", np.asarray([
+
+                ])),
+                synapse_list("sync", "acc1-", np.asarray([
+
+                ])),
+                synapse_list("sync", "acc2+", np.asarray([
+
+                ])),
+                synapse_list("sync", "acc2-", np.asarray([
+
+                ])),
+                synapse_list("", "", np.asarray([
+
+                ]))
+            ]),
+            "subnets" : [{
+                "name" : "synchronizer",
+                "n" : 1,
+                "synapses" : np.asarray([
+
+                ])
+            }, {
+                "name" : "full_subtractor",
+                "n" : 1,
+                "synapses" : np.asarray([
+
+                ])
+            }]
         }
     }
 
