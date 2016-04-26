@@ -1,6 +1,8 @@
 import numpy as np
 import socket, pickle
-import spikekernel, tcp
+
+import tcp.tcp as tcp
+import neural.spikekernel as spikekernel
 
 def main():
 

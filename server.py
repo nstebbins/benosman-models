@@ -1,6 +1,8 @@
 import socket, threading, pickle
-import spikekernel, tcp
 import numpy as np
+
+import tcp.tcp as tcp
+import neural.spikekernel as spikekernel
 
 class client_thread(threading.Thread):
 
