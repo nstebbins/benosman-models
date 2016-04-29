@@ -9,3 +9,7 @@ V_t = 10; V_reset = 0 # voltage model params
 w_e = V_t; w_i = -V_t # std. voltage weights
 g_mult = V_t * tau_m / tau_f
 w_acc = V_t * tau_m / T_max; w_bar_acc = V_t * tau_m / T_cod
+
+# coefficient constants
+alpha0 = 0.4
+alpha1 = 0.6
