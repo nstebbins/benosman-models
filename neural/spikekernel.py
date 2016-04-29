@@ -38,17 +38,19 @@ class adj_matrix(object):
     def synapse_prop(self, syn, n_to, tj):
         global T_TO_POS
 
+        t_delay = tj + int(T_TO_POS * (syn.s_delay + T_neu))
+
         if syn.s_type is "V":
-            self.neurons[n_to].v[tj + int(T_TO_POS * syn.s_delay)] += syn.s_weight
+            self.neurons[n_to].v[t_delay] += syn.s_weight
         elif syn.s_type is "g_e":
-            self.neurons[n_to].g_e[tj + int(T_TO_POS * syn.s_delay)] += syn.s_weight
+            self.neurons[n_to].g_e[t_delay] += syn.s_weight
         elif syn.s_type is "g_f":
-            self.neurons[n_to].g_f[tj + int(T_TO_POS * syn.s_delay)] += syn.s_weight
+            self.neurons[n_to].g_f[t_delay] += syn.s_weight
         else: # gate synapse
             if syn.s_weight is 1:
-                self.neurons[n_to].gate[tj + int(T_TO_POS * syn.s_delay)] = 1
+                self.neurons[n_to].gate[t_delay] = 1
             elif syn.s_weight is -1:
-                self.neurons[n_to].gate[tj + int(T_TO_POS * syn.s_delay)] = 0
+                self.neurons[n_to].gate[t_delay] = 0
             else:
                 pass # throw error
 
@@ -63,6 +65,8 @@ def plot_v(neurons):
     plt.show()
 
 def inspect_neuron(neuron):
+    '''used for debugging'''
+
     with open("output.txt", "a") as fp: # output to file
         fp.truncate(0)
         for i in range(t.size):
@@ -71,6 +75,8 @@ def inspect_neuron(neuron):
                  + ", " + str(acc_neuron.gate[i]) + ")\n")
 
 def initialize_neurons(neuron_names, t, data = None):
+    '''initialize neurons with some data, if necessary'''
+
     neurons = np.asarray([neuron(label, t) for label in neuron_names])
 
     # setting stimuli spikes
@@ -82,6 +88,7 @@ def initialize_neurons(neuron_names, t, data = None):
     return(neurons)
 
 def simulate_neurons(f_name, data = {}):
+    '''implementation of a neural model'''
 
     f_p = functions[f_name] # parameters
 
