@@ -22,7 +22,9 @@ class adj_matrix(object):
             j = self.neuron_names.index(synapse_list.n_to)
             self.synapse_matrix[i][j] = synapse_list
 
-    def simulate(self): # update voltages for neurons
+    def simulate(self):
+        '''update voltages for neurons'''
+
         global V_t
         t = (self.neurons[0].t) # retrieve time window
         for tj in range(1, t.size):
@@ -36,8 +38,9 @@ class adj_matrix(object):
                                 self.synapse_prop(syn, n_to, tj)
 
     def synapse_prop(self, syn, n_to, tj):
-        global T_TO_POS
+        '''propagate the synapse through the adjacency matrix'''
 
+        global T_TO_POS
         t_delay = tj + int(T_TO_POS * (syn.s_delay + T_neu))
 
         if syn.s_type is "V":
@@ -56,12 +59,17 @@ class adj_matrix(object):
 
 def plot_v(neurons):
 
-    f, axarr = plt.subplots(neurons.size, 1, figsize=(15,10), squeeze=False)
+    fig = plt.figure(1, figsize=(15, 10))
+
     for i in range(neurons.size):
-        axarr[i,0].plot(neurons[i].t, neurons[i].v)
-        axarr[i,0].set_title('voltage for ' + neurons[i].ID)
-    plt.setp([a.get_xticklabels() for a in axarr[:,0]], visible = False)
-    plt.setp([axarr[neurons.size - 1,0].get_xticklabels()], visible = True)
+        num = int(str(neurons.size) + "1" + str(i+1))
+
+        ax = fig.add_subplot(num)
+        ax.plot(neurons[i].t, neurons[i].v)
+        ax.set_xlabel('time (ms)')
+        ax.set_ylabel('voltage (mV)')
+        ax.set_title('voltage for ' + neurons[i].ID)
+
     plt.show()
 
 def initialize_neurons(neuron_names, t, data = None):
