@@ -30,7 +30,7 @@ class adj_matrix(object):
                 self.neurons[ni].next_v(tj)
                 if self.neurons[ni].v[tj] >= V_t:
                     # check adjacency matrix for synapses to send out
-                    for n_to in range(0,self.neurons.size):
+                    for n_to in range(0, self.neurons.size):
                         if self.synapse_matrix[ni][n_to] is not None:
                             for syn in self.synapse_matrix[ni][n_to].synapses:
                                 self.synapse_prop(syn, n_to, tj)
@@ -64,16 +64,6 @@ def plot_v(neurons):
     plt.setp([axarr[neurons.size - 1,0].get_xticklabels()], visible = True)
     plt.show()
 
-def inspect_neuron(neuron):
-    '''used for debugging'''
-
-    with open("output.txt", "a") as fp: # output to file
-        fp.truncate(0)
-        for i in range(t.size):
-            fp.write("(" + str(t[i]) + ", " + str(acc_neuron.v[i])
-                 + ", " + str(acc_neuron.g_e[i]) + ", " + str(acc_neuron.g_f[i])
-                 + ", " + str(acc_neuron.gate[i]) + ")\n")
-
 def initialize_neurons(neuron_names, t, data = None):
     '''initialize neurons with some data, if necessary'''
 
@@ -101,63 +91,41 @@ def simulate_neurons(f_name, data = {}):
     syn_matrix = adj_matrix(neurons, f_p["synapses"], f_p["neuron_names"])
 
     # augmented adjacency matrix (with subnets)
-    if "subnets" in f_p:
-        for subnet_type in f_p["subnets"]: # each network type
-            subnet_names = functions[subnet_type["name"]]["neuron_names"]
-            to_add = len(subnet_names)
+    if "subnets" in f_p: # model supports subnets?
+        for subnet in f_p["subnets"]:
 
-            for subnet in range(subnet_type["n"]): # each network for the network type
+            subnet_names = subnet["neuron_names"]
 
-                uniq_subnet_names = ["_sub" + subnet_type["name"] +
-                    subnet_name + str(subnet) for subnet_name in subnet_names]
+            curr_offset = (syn_matrix.synapse_matrix).shape[0]
+            new_sze = len(subnet_names) + curr_offset
 
-                offset = int(math.sqrt((syn_matrix.synapse_matrix).size))
-                aug_dim = to_add + offset
+            # neurons
+            subnet_neurons = initialize_neurons(subnet_names, t)
+            neurons = np.concatenate((neurons, subnet_neurons), axis = 0)
 
-                # neurons
-                subnet_neurons = initialize_neurons(
-                    uniq_subnet_names, t)
-                neurons = np.concatenate((neurons, subnet_neurons), axis = 0)
+            # sub matrix
+            sub_matrix = adj_matrix(subnet_neurons,
+                functions[subnet["name"]]["synapses"],
+                functions[subnet["name"]]["neuron_names"]
+            )
 
-                # get adjacency matrix for the subnet
-                sub_matrix = adj_matrix(subnet_neurons,
-                    functions[subnet_type["name"]]["synapses"],
-                    functions[subnet_type["name"]]["neuron_names"])
+            # augmented matrix
+            aug_matrix = np.empty((new_sze, new_sze), dtype = object)
+            aug_matrix[:curr_offset, :curr_offset] = syn_matrix.synapse_matrix
+            aug_matrix[curr_offset:, curr_offset:] = sub_matrix.synapse_matrix
 
-                # initialize augmented matrix
-                aug_matrix = np.empty((aug_dim, aug_dim), dtype = object)
-                aug_matrix[:offset, :offset] = syn_matrix.synapse_matrix
-                aug_matrix[offset:, offset:] = sub_matrix.synapse_matrix
+            # neurons & neuron names set for synapse matrix
+            syn_matrix.neurons = neurons
+            syn_matrix.neuron_names += subnet_names
 
-                # iterate over synapses & add them to preexisting adj matrix
-                for synlist in subnet_type["synapses"]:
-                    if synlist.syntype == 1:
-                        pass
-                    elif synlist.syntype == 2: # overall -> subnet
-                        if (synlist.n_from).startswith("_"):
-                            i = f_p["neuron_names"].index(
-                                    synlist.n_from) # e.g. _sync
-                        else:
-                            i = f_p["neuron_names"].index(
-                                    synlist.n_from + str(subnet))
-                        j = offset + subnet_names.index(synlist.n_to)
-                    elif synlist.syntype == 3: # subnet -> subnet
-                        i = offset + subnet_names.index(synlist.n_from)
-                        j = offset + subnet_names.index(synlist.n_to)
-                    else: # subnet -> overall
-                        i = offset + subnet_names.index(synlist.n_from)
-                        if (synlist.n_to).startswith("_"):
-                            j = f_p["neuron_names"].index(
-                                    synlist.n_to) # e.g. _sync
-                        else:
-                            j = f_p["neuron_names"].index(
-                                    synlist.n_to + str(subnet))
+            # iterate over synapses & add them to preexisting adj matrix
+            for synlist in subnet["synapses"]:
+                i = syn_matrix.neuron_names.index(synlist.n_from)
+                j = syn_matrix.neuron_names.index(synlist.n_to)
+                aug_matrix[i][j] = synlist
 
-                    aug_matrix[i][j] = synlist
-
-                syn_matrix.neurons = neurons
-                syn_matrix.neuron_names += uniq_subnet_names
-                syn_matrix.synapse_matrix = aug_matrix
+            # synapse matrix set for synapse matrix
+            syn_matrix.synapse_matrix = aug_matrix
 
     syn_matrix.simulate()
 
