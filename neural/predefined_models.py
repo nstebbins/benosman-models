@@ -177,7 +177,7 @@ functions = {
         "t" : 1,
         "neuron_names" : ["input1", "input2", "zero", "sync1",
             "sync2", "inb1", "inb2", "output_plus", "output_minus"],
-        "output_idx" : [0, 1, 7, 8],
+        "output_idx" : [7, 8],
         "synapses" : np.asarray([
             synapse_list("input1", "sync1", np.asarray([
                 synapse("V", 0.5 * w_e, T_syn)
@@ -239,153 +239,152 @@ functions = {
                 synapse("V", 0.5 * w_e, T_syn)
             ]))
         ])
+    },
+    "linear_combination" : {
+        "t" : 1,
+        "neuron_names" : ["input0+", "input0-", "input1+", "input1-",
+            "input0+first", "input0+last", "input0-first", "input0-last",
+            "input1+first", "input1+last", "input1-first", "input1-last",
+            "sync", "acc1+", "acc1-", "acc2+", "acc2-", "inter+", "inter-",
+            "output+", "output-", "start"
+        ],
+        "output_idx" : [12, 13, 17, 18, 22, 23, 24, 25],
+        "synapses" : np.asarray([
+            synapse_list("input0+", "input0+first", np.asarray([
+                synapse("V", w_e, T_syn)
+            ])),
+            synapse_list("input0+", "input0+last", np.asarray([
+                synapse("V", 0.5 * w_e, T_syn)
+            ])),
+            synapse_list("input0-", "input0-first", np.asarray([
+                synapse("V", w_e, T_syn)
+            ])),
+            synapse_list("input0-", "input0-last", np.asarray([
+                synapse("V", 0.5 * w_e, T_syn)
+            ])),
+            synapse_list("input1+", "input1+first", np.asarray([
+                synapse("V", w_e, T_syn)
+            ])),
+            synapse_list("input1+", "input1+last", np.asarray([
+                synapse("V", 0.5 * w_e, T_syn)
+            ])),
+            synapse_list("input1-", "input1-first", np.asarray([
+                synapse("V", w_e, T_syn)
+            ])),
+            synapse_list("input1-", "input1-last", np.asarray([
+                synapse("V", 0.5 * w_e, T_syn)
+            ])),
+            synapse_list("input0+last", "sync", np.asarray([
+                synapse("V", 0.5 * w_e, T_syn)
+            ])),
+            synapse_list("input0-last", "sync", np.asarray([
+                synapse("V", 0.5 * w_e, T_syn)
+            ])),
+            synapse_list("input1+last", "sync", np.asarray([
+                synapse("V", 0.5 * w_e, T_syn)
+            ])),
+            synapse_list("input1-last", "sync", np.asarray([
+                synapse("V", 0.5 * w_e, T_syn)
+            ])),
+            synapse_list("sync", "acc1+", np.asarray([
+                synapse("g_e", w_acc, T_syn)
+            ])),
+            synapse_list("sync", "acc1-", np.asarray([
+                synapse("g_e", w_acc, T_syn)
+            ])),
+            synapse_list("sync", "acc2+", np.asarray([
+                synapse("g_e", w_acc, T_syn)
+            ])),
+            synapse_list("sync", "acc2-", np.asarray([
+                synapse("g_e", w_acc, T_syn)
+            ])),
+            synapse_list("input0+first", "input0+first", np.asarray([
+                synapse("V", w_i, T_syn)
+            ])),
+            synapse_list("input0-first", "input0-first", np.asarray([
+                synapse("V", w_i, T_syn)
+            ])),
+            synapse_list("input1+first", "input1+first", np.asarray([
+                synapse("V", w_i, T_syn)
+            ])),
+            synapse_list("input1-first", "input1-first", np.asarray([
+                synapse("V", w_i, T_syn)
+            ])),
+            synapse_list("input0+first", "acc1+", np.asarray([
+                synapse("g_e", alpha0 * w_acc, T_syn + T_min)
+            ])),
+            synapse_list("input0+last", "acc1+", np.asarray([
+                synapse("g_e", -alpha0 * w_acc, T_syn)
+            ])),
+            synapse_list("input0-first", "acc1-", np.asarray([
+                synapse("g_e", alpha0 * w_acc, T_syn + T_min)
+            ])),
+            synapse_list("input0-last", "acc1-", np.asarray([
+                synapse("g_e", -alpha0 * w_acc, T_syn)
+            ])),
+            synapse_list("input1+first", "acc1-", np.asarray([
+                synapse("g_e", alpha0 * w_acc, T_syn + T_min)
+            ])),
+            synapse_list("input1+last", "acc1-", np.asarray([
+                synapse("g_e", -alpha0 * w_acc, T_syn)
+            ])),
+            synapse_list("input1-first", "acc1+", np.asarray([
+                synapse("g_e", alpha0 * w_acc, T_syn + T_min)
+            ])),
+            synapse_list("input1-last", "acc1+", np.asarray([
+                synapse("g_e", -alpha0 * w_acc, T_syn)
+            ])),
+            synapse_list("acc1+", "inter+", np.asarray([
+                synapse("V", w_e, T_syn)
+            ])),
+            synapse_list("acc1-", "inter-", np.asarray([
+                synapse("V", w_e, T_syn)
+            ])),
+            synapse_list("acc2+", "inter+", np.asarray([
+                synapse("V", w_e, T_syn + T_min)
+            ])),
+            synapse_list("acc2-", "inter-", np.asarray([
+                synapse("V", w_e, T_syn + T_min)
+            ])),
+            synapse_list("start", "start", np.asarray([
+                synapse("V", w_i, T_syn)
+            ]))
+        ]),
+        "subnets" : [{
+            "name" : "synchronizer",
+            "neuron_names" : ["input0", "input1", "output0", "output1", "_sync"],
+            "synapses" : np.asarray([
+                synapse_list("inter+", "input0", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ])),
+                synapse_list("inter-", "input1", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]))
+            ])
+        }, {
+            "name" : "full_subtractor",
+            "neuron_names" : ["inputsub0", "inputsub1", "zero", "sync1",
+                "sync2", "inb1", "inb2", "outputsub+", "outputsub-"],
+            "synapses" : np.asarray([
+                synapse_list("output0", "inputsub0", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ])),
+                synapse_list("output1", "inputsub1", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ])),
+                synapse_list("outputsub+", "output+", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ])),
+                synapse_list("outputsub+", "start", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ])),
+                synapse_list("outputsub-", "output-", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ])),
+                synapse_list("outputsub-", "start", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]))
+            ])
+        }]
     }
 }
-
-'''
-"linear_combination" : {
-    "t" : 1,
-    "neuron_names" : ["input0+", "input0-", "input1+", "input1-",
-        "input0+first", "input0+last", "input0-first", "input0-last",
-        "input1+first", "input1+last", "input1-first", "input1-last",
-        "sync", "acc1+", "acc1-", "acc2+", "acc2-", "inter+", "inter-",
-        "output+", "output-"
-    ],
-    "output_idx" : [19, 20],
-    "synapses" : np.asarray([
-        synapse_list("input0+", "input0+first", np.asarray([
-            synapse("V", w_e, T_syn)
-        ])),
-        synapse_list("input0+", "input0+last", np.asarray([
-            synapse("V", 0.5 * w_e, T_syn)
-        ])),
-        synapse_list("input0-", "input0-first", np.asarray([
-            synapse("V", w_e, T_syn)
-        ])),
-        synapse_list("input0-", "input0-last", np.asarray([
-            synapse("V", 0.5 * w_e, T_syn)
-        ])),
-        synapse_list("input1+", "input1+first", np.asarray([
-            synapse("V", w_e, T_syn)
-        ])),
-        synapse_list("input1+", "input1+last", np.asarray([
-            synapse("V", 0.5 * w_e, T_syn)
-        ])),
-        synapse_list("input1-", "input1-first", np.asarray([
-            synapse("V", w_e, T_syn)
-        ])),
-        synapse_list("input1-", "input1-last", np.asarray([
-            synapse("V", 0.5 * w_e, T_syn)
-        ])),
-        synapse_list("input0+last", "sync", np.asarray([
-            synapse("V", 0.5 * w_e, T_syn)
-        ])),
-        synapse_list("input0-last", "sync", np.asarray([
-            synapse("V", 0.5 * w_e, T_syn)
-        ])),
-        synapse_list("input1+last", "sync", np.asarray([
-            synapse("V", 0.5 * w_e, T_syn)
-        ])),
-        synapse_list("input1-last", "sync", np.asarray([
-            synapse("V", 0.5 * w_e, T_syn)
-        ])),
-        synapse_list("sync", "acc1+", np.asarray([
-            synapse("g_e", w_acc, T_syn)
-        ])),
-        synapse_list("sync", "acc1-", np.asarray([
-            synapse("g_e", w_acc, T_syn)
-        ])),
-        synapse_list("sync", "acc2+", np.asarray([
-            synapse("g_e", w_acc, T_syn)
-        ])),
-        synapse_list("sync", "acc2-", np.asarray([
-            synapse("g_e", w_acc, T_syn)
-        ])),
-        synapse_list("input0+first", "input0+first", np.asarray([
-            synapse("V", w_i, T_syn)
-        ])),
-        synapse_list("input0-first", "input0-first", np.asarray([
-            synapse("V", w_i, T_syn)
-        ])),
-        synapse_list("input1+first", "input1+first", np.asarray([
-            synapse("V", w_i, T_syn)
-        ])),
-        synapse_list("input1-first", "input1-first", np.asarray([
-            synapse("V", w_i, T_syn)
-        ])),
-        synapse_list("input0+first", "acc1+", np.asarray([
-            synapse("g_e", alpha0 * w_acc, T_syn + T_min)
-        ])),
-        synapse_list("input0+last", "acc1+", np.asarray([
-            synapse("g_e", -alpha0 * w_acc, T_syn)
-        ])),
-        synapse_list("input0-first", "acc1-", np.asarray([
-            synapse("g_e", alpha0 * w_acc, T_syn + T_min)
-        ])),
-        synapse_list("input0-last", "acc1-", np.asarray([
-            synapse("g_e", -alpha0 * w_acc, T_syn)
-        ])),
-        synapse_list("input1+first", "acc1-", np.asarray([
-            synapse("g_e", alpha0 * w_acc, T_syn + T_min)
-        ])),
-        synapse_list("input1+last", "acc1-", np.asarray([
-            synapse("g_e", -alpha0 * w_acc, T_syn)
-        ])),
-        synapse_list("input1-first", "acc1+", np.asarray([
-            synapse("g_e", alpha0 * w_acc, T_syn + T_min)
-        ])),
-        synapse_list("input1-last", "acc1+", np.asarray([
-            synapse("g_e", -alpha0 * w_acc, T_syn)
-        ])),
-        synapse_list("acc1+", "inter+", np.asarray([
-            synapse("V", w_e, T_syn)
-        ])),
-        synapse_list("acc1-", "inter-", np.asarray([
-            synapse("V", w_e, T_syn)
-        ])),
-        synapse_list("acc2+", "inter+", np.asarray([
-            synapse("V", w_e, T_syn + T_min)
-        ])),
-        synapse_list("acc2-", "inter-", np.asarray([
-            synapse("V", w_e, T_syn + T_min)
-        ])),
-        synapse_list("start", "start", np.asarray([
-            synapse("V", w_i, T_syn)
-        ]))
-    ]),
-    "subnets" : [{
-        "name" : "synchronizer",
-        "n" : 2,
-        "synapses" : np.asarray([
-            synapse_list("_inter+", "", np.asarray([
-
-            ]), 2)
-        ])
-    }, {
-        "name" : "synchronizer",
-        "n" : 2,
-        "synapses" : np.asarray([
-            synapse_list("_inter-", "", np.asarray([
-
-            ]), 2)
-        ])
-    }, {
-        "name" : "full_subtractor",
-        "n" : 1,
-        "synapses" : np.asarray([
-            synapse_list("", "", np.asarray([
-
-            ]), 4),
-            synapse_list("", "", np.asarray([
-
-            ]), 4),
-            synapse_list("", "", np.asarray([
-
-            ]), 4),
-            synapse_list("", "", np.asarray([
-
-            ]), 4)
-        ])
-    }] # NOTE: also need to account for connections between subnets!
-}
-'''

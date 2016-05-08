@@ -116,6 +116,7 @@ def simulate_neurons(f_name, data = {}):
                 functions[subnet["name"]]["synapses"],
                 functions[subnet["name"]]["neuron_names"]
             )
+            ## --> need to modify this to include ALL subnets
 
             # augmented matrix
             aug_matrix = np.empty((new_sze, new_sze), dtype = object)
