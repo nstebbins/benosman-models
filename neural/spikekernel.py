@@ -98,7 +98,7 @@ def simulate_neurons(f_name, data = {}):
     # initial adjacency matrix (without subnets)
     syn_matrix = adj_matrix(neurons, f_p["synapses"], f_p["neuron_names"])
 
-    augment_matrix(syn_matrix, f_p)
+    # augment_matrix(syn_matrix, f_p)
 
     syn_matrix.simulate()
 

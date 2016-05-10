@@ -15,7 +15,7 @@ def main():
     tcpsock.connect((host, port))
 
     messages = [
-        "linear_combination;input0+ 1000 input0+ 1200 input1- 1600 input1- 2200"
+        "full_subtractor;inputtwo 2000 inputtwo 2900 inputone 2000 inputone 2400",
     ]
 
     '''
@@ -25,7 +25,8 @@ def main():
         "logarithm;input 2000 input 2700",
         "maximum;input 2000 input 2400 input2 2000 input2 2900",
         "non_inverting_memory;input 2000 input 2200 recall 5000",
-        "synchronizer;input0 1000 input0 1600 input1 2000 input1 2700"
+        "synchronizer;input0 1000 input0 1600 input1 2000 input1 2700",
+        "linear_combination;input0+ 1000 input0+ 1200 input1- 1600 input1- 2200"
     ]
     '''
 
