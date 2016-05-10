@@ -98,44 +98,45 @@ def simulate_neurons(f_name, data = {}):
     # initial adjacency matrix (without subnets)
     syn_matrix = adj_matrix(neurons, f_p["synapses"], f_p["neuron_names"])
 
-    # augmented adjacency matrix (with subnets)
-    if "subnets" in f_p: # model supports subnets?
-        for subnet in f_p["subnets"]:
+    augment_matrix(syn_matrix, f_p)
 
-            subnet_names = subnet["neuron_names"]
+    syn_matrix.simulate()
 
-            curr_offset = (syn_matrix.synapse_matrix).shape[0]
-            new_sze = len(subnet_names) + curr_offset
+    return((f_p["output_idx"], neurons))
 
-            # neurons
-            subnet_neurons = initialize_neurons(subnet_names, t)
-            neurons = np.concatenate((neurons, subnet_neurons), axis = 0)
+def augment_matrix(syn_matrix, func):
+    '''look at curr subnet of interest and add stuff to network'''
+    '''NEEDS TO BE TWEAKED'''
+
+    if "subnets" not in func:
+        return syn_matrix
+    else:
+        for subnet in func["subnets"]:
+
+            sub_names = subnet["neuron_names"]
+
+            pre_sze = (syn_matrix.synapse_matrix).shape[0]
+            new_sze = len(sub_names) + curr_offset
+
+            sub_neurons = initialize_neurons(sub_names, t)
+
+            syn_matrix.neurons = np.concatenate((neurons, sub_neurons), axis = 0)
+            syn_matrix.neuron_names += sub_names
 
             # sub matrix
-            sub_matrix = adj_matrix(subnet_neurons,
+            sub_matrix = adj_matrix(sub_neurons,
                 functions[subnet["name"]]["synapses"],
                 functions[subnet["name"]]["neuron_names"]
             )
-            ## --> need to modify this to include ALL subnets
 
             # augmented matrix
             aug_matrix = np.empty((new_sze, new_sze), dtype = object)
-            aug_matrix[:curr_offset, :curr_offset] = syn_matrix.synapse_matrix
-            aug_matrix[curr_offset:, curr_offset:] = sub_matrix.synapse_matrix
+            aug_matrix[:pre_sze, :pre_sze] = syn_matrix.synapse_matrix
+            aug_matrix[pre_sze:, pre_sze:] = sub_matrix.synapse_matrix
 
-            # neurons & neuron names set for synapse matrix
-            syn_matrix.neurons = neurons
-            syn_matrix.neuron_names += subnet_names
-
-            # iterate over synapses & add them to preexisting adj matrix
             for synlist in subnet["synapses"]:
                 i = syn_matrix.neuron_names.index(synlist.n_from)
                 j = syn_matrix.neuron_names.index(synlist.n_to)
                 aug_matrix[i][j] = synlist
 
-            # synapse matrix set for synapse matrix
             syn_matrix.synapse_matrix = aug_matrix
-
-    syn_matrix.simulate()
-
-    return((f_p["output_idx"], neurons))

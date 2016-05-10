@@ -12,3 +12,18 @@ class synapse_list(object):
         self.n_from = n_from
         self.n_to = n_to
         self.synapses = synapses
+
+    '''
+        syntype //
+        - specifies whether a connection is
+            (1) within the overall network
+            (2) from overall network to subnetwork
+            (3) within subnetwork
+            (4) from subnetwork to overall network
+        - this is used when augmenting the adjacency matrix with subnets
+    '''
+
+    if syntype is None:
+        self.syntype = 1
+    else:
+        self.syntype = syntype
