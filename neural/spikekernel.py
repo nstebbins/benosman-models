@@ -13,19 +13,22 @@ class adj_matrix(object):
     def __init__(self):
         '''default constructor'''
 
-    def fill_in(self, neurons, synapses, neuron_names):
+    def fill_in(self, synapses, neuron_names, curr_o, par_o):
         '''fill in matrix with synapses'''
 
-        synapse_matrix = np.empty((neurons.size, neurons.size),
-            dtype = object)
+        for syn_list in synapses:
 
-        # fill in synapse matrix
-        for synapse_list in synapses:
-            i = neuron_names.index(synapse_list.n_from)
-            j = neuron_names.index(synapse_list.n_to)
-            synapse_matrix[i][j] = synapse_list
+            if syn_list.syntype is 1: # net -> net
+                off1 = curr_o; off2 = curr_o
+            elif syn_list.syntype is 2: # net -> parent
+                off1 = curr_o; off2 = par_o
+            else: # parent -> net
+                off1 = par_o; off2 = curr_o
 
-        return(synapse_matrix)
+            i = off1 + neuron_names[off1:].index(syn_list.n_from)
+            j = off2 + neuron_names[off2:].index(syn_list.n_to)
+
+            self.synapse_matrix[i][j] = syn_list
 
     def simulate(self):
         '''update voltages for neurons'''
@@ -80,7 +83,7 @@ def plot_v(neurons):
 def init_neu(neuron_names, t, data = None):
     '''initialize neurons with some data, if necessary'''
 
-    neurons = np.asarray([neuron(label, t) for label in neuron_names])
+    neurons = [neuron(label, t) for label in neuron_names]
 
     # setting stimuli spikes
     if data is not None:
@@ -124,23 +127,22 @@ def simulate_neurons(f_name, data = {}):
     aug_matrix = adj_matrix()
     aug_matrix.synapse_matrix = np.empty((cumul_tot, cumul_tot), dtype = object)
 
-    aug_matrix.neurons = []
     aug_matrix.neuron_names = []
 
     for net in networkq:
         curr, rootpos, currpos = net
+        aug_matrix.neuron_names += functions[curr]["neuron_names"]
 
-        neu_names = functions[curr]["neuron_names"]
-        neurons = init_neu(neu_names, t)
+    aug_matrix.neurons = init_neu(aug_matrix.neu_names, t)
+
+    for net in reversed(networkq):
+        curr, rootpos, currpos = net
 
         # fill in portion of synapse matrix
-        sub_matrix = aug_matrix.fill_in(neurons, functions[curr]["synapses"], neu_names)
+        aug_matrix.fill_in(functions[curr]["synapses"],
+            aug_matrix.neuron_names, currpos, rootpos)
 
-        endpos = currpos + len_neurons(curr)
-        aug_matrix.synapse_matrix[currpos:endpos, currpos:endpos] = sub_matrix
-
-        aug_matrix.neuron_names += neu_names
-        aug_matrix.neurons += neurons
+        # connect to any children (need children pos list)
 
         print(aug_matrix.synapse_matrix)
 
