@@ -85,13 +85,33 @@ def initialize_neurons(neuron_names, t, data = None):
 
     return(neurons)
 
+def len_neurons(f_name):
+    '''helper method: get number of highest-level neurons in a network'''
+    return(len(functions[f_name]["neuron_names"]))
+
+
 def simulate_neurons(f_name, data = {}):
     '''implementation of a neural model'''
 
+    # create queue with all network names
+    tempq = [(f_name, -1, 0)] # (network name, parent pos, my pos)
+    networkq = []
+
+    while tempq is not empty: # visit net and add all subnets
+        curr, rootpos, currpos = tempq.pop(0)
+        tempq.append([(subnet["name"], currpos, currpos + len_neurons(subnet["name"]))
+            for subnet in functions[curr]["subnets"]])
+        networkq.append((curr, rootpos, currpos))
+
+    print(networkq)
+
+    '''
     f_p = functions[f_name] # parameters
 
     # time frame & neurons
     t = np.multiply(TO_MS, np.arange(0, f_p["t"], 1e-4)) # time in MS
+
+
     neurons = initialize_neurons(
         f_p["neuron_names"], t, data)
 
@@ -103,6 +123,9 @@ def simulate_neurons(f_name, data = {}):
     syn_matrix.simulate()
 
     return((f_p["output_idx"], neurons))
+    '''
+    
+simulate_neurons("linear_combination")
 
 def augment_matrix(syn_matrix, func):
     '''look at curr subnet of interest and add stuff to network'''
