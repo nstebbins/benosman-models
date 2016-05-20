@@ -20,7 +20,11 @@ class client_thread(threading.Thread):
 
         # e.g. INVERTING_MEMORY;INPUT 2000 INPUT 2900 RECALL 5000
         f_specs = input_str.split(";")
-        f_name = f_specs[0]; f_inputs = f_specs[1].split(" ")
+        f_name = f_specs[0]
+
+        f_inputs = f_specs[1].split(" ")
+        f_inputs = list(filter(lambda x: x is not "", f_inputs))
+
         data = {}
 
         for i in range(0, len(f_inputs), 2):

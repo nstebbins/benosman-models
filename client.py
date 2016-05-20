@@ -15,7 +15,7 @@ def main():
     tcpsock.connect((host, port))
 
     messages = [
-        "full_subtractor;inputtwo 2000 inputtwo 2900 inputone 2000 inputone 2400",
+        "linear_combination;"
     ]
 
     '''

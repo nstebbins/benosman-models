@@ -97,13 +97,20 @@ def simulate_neurons(f_name, data = {}):
     tempq = [(f_name, -1, 0)] # (network name, parent pos, my pos)
     networkq = []
 
-    while tempq is not empty: # visit net and add all subnets
+    cumul_tot = len_neurons(f_name)
+
+    while tempq: # visit net and add all subnets
         curr, rootpos, currpos = tempq.pop(0)
-        tempq.append([(subnet["name"], currpos, currpos + len_neurons(subnet["name"]))
-            for subnet in functions[curr]["subnets"]])
+        if "subnets" in functions[curr]:
+            for subnet in functions[curr]["subnets"]:
+                tempq.append((subnet["name"], currpos, cumul_tot))
+                cumul_tot += len_neurons(subnet["name"])
+
         networkq.append((curr, rootpos, currpos))
 
     print(networkq)
+
+    return((functions[f_name]["output_idx"], neurons))
 
     '''
     f_p = functions[f_name] # parameters
@@ -124,8 +131,6 @@ def simulate_neurons(f_name, data = {}):
 
     return((f_p["output_idx"], neurons))
     '''
-    
-simulate_neurons("linear_combination")
 
 def augment_matrix(syn_matrix, func):
     '''look at curr subnet of interest and add stuff to network'''
