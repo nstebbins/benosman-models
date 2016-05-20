@@ -13,7 +13,7 @@ class adj_matrix(object):
     def __init__(self):
         '''default constructor'''
 
-    def fill_in(self, synapses, neuron_names, curr_o, par_o):
+    def fill_in(self, synapses, neuron_names, curr_o, child_o):
         '''fill in matrix with synapses'''
 
         for syn_list in synapses:
@@ -21,9 +21,9 @@ class adj_matrix(object):
             if syn_list.syntype is 1: # net -> net
                 off1 = curr_o; off2 = curr_o
             elif syn_list.syntype is 2: # net -> parent
-                off1 = curr_o; off2 = par_o
+                off1 = curr_o; off2 = child_o
             else: # parent -> net
-                off1 = par_o; off2 = curr_o
+                off1 = child_o; off2 = curr_o
 
             i = off1 + neuron_names[off1:].index(syn_list.n_from)
             j = off2 + neuron_names[off2:].index(syn_list.n_to)
@@ -94,9 +94,15 @@ def init_neu(neuron_names, t, data = None):
     return(neurons)
 
 def len_neurons(f_name):
-    '''helper method: get number of highest-level neurons in a network'''
+    '''helper method: get # of highest-level neurons in a network'''
     return(len(functions[f_name]["neuron_names"]))
 
+def get_par_pos(augq, rootpos):
+    '''helper method: get index of parent'''
+    for i, elem in enumerate(augq):
+        if elem[2] is rootpos: # 2 = currpos
+            return(i)
+    return(-1) # error
 
 def simulate_neurons(f_name, data = {}):
     '''implementation of a neural model'''
@@ -104,7 +110,8 @@ def simulate_neurons(f_name, data = {}):
     # time frame
     t = np.multiply(TO_MS, np.arange(0, functions[f_name]["t"], 1e-4)) # time in MS
 
-    # create queue with all network names
+    # ** create queue with all network names
+
     tempq = [(f_name, -1, 0)] # (network name, parent pos, my pos)
     networkq = []
 
@@ -120,9 +127,9 @@ def simulate_neurons(f_name, data = {}):
 
         networkq.append((curr, rootpos, currpos))
 
-    print(networkq)
+    print(networkq) # COMPLETED NETWORKQ
 
-    # create adjacency matrix from queue
+    # ** initialize adjacency matrix from queue
 
     aug_matrix = adj_matrix()
     aug_matrix.synapse_matrix = np.empty((cumul_tot, cumul_tot), dtype = object)
@@ -133,22 +140,42 @@ def simulate_neurons(f_name, data = {}):
         curr, rootpos, currpos = net
         aug_matrix.neuron_names += functions[curr]["neuron_names"]
 
-    aug_matrix.neurons = init_neu(aug_matrix.neu_names, t)
+    aug_matrix.neurons = init_neu(aug_matrix.neuron_names, t)
 
-    for net in reversed(networkq):
-        curr, rootpos, currpos = net
+    # ** augment networkq so that it points forward (to children)
+
+    augq = [[curr, rootpos, currpos, []]
+        for curr, rootpos, currpos in networkq]
+
+    for i, net in enumerate(reversed(augq)):
+        _, rootpos, _, _ = net
+        if rootpos is not -1:
+            # 3 = children list
+            augq[get_par_pos(augq, rootpos)][3].append(i)
+
+    print(augq) # COMPLETED AUGQ
+
+    # ** add synapses
+
+    for net in augq:
+        curr, rootpos, currpos, childposes = net
 
         # fill in portion of synapse matrix
         aug_matrix.fill_in(functions[curr]["synapses"],
-            aug_matrix.neuron_names, currpos, rootpos)
+            aug_matrix.neuron_names, currpos, -1)
 
-        # connect to any children (need children pos list)
+        # add connections to children
+        if "subnets" in functions[curr]:
+            for i, subnet in enumerate(functions[curr]["subnets"]):
+                child = augq[childposes[i]]
+                aug_matrix.fill_in(subnet["synapses"],
+                aug_matrix.neuron_names, currpos, child[2]) # 2 = currpos
 
-        print(aug_matrix.synapse_matrix)
+    print(aug_matrix.synapse_matrix) # COMPLETED SYNMATRIX
 
     # aug_matrix.simulate() # simulate network
 
-    return((functions[f_name]["output_idx"], neurons))
+    return((functions[f_name]["output_idx"], aug_matrix.neurons))
 
 def augment_matrix(syn_matrix, func):
     '''look at curr subnet of interest and add stuff to network'''
