@@ -143,13 +143,13 @@ functions = {
                 ]), 2),
                 synapse_list("output", "outputone", np.asarray([
                     synapse("V", w_e, T_syn)
-                ]), 4),
+                ]), 3),
                 synapse_list("_sync", "recall", np.asarray([
                     synapse("V", w_e, T_syn)
                 ]), 2),
                 synapse_list("ready", "_sync", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn)
-                ]), 4)
+                ]), 3)
             ])
         }, {
             "name" : "non_inverting_memory",
@@ -159,13 +159,13 @@ functions = {
                 ]), 2),
                 synapse_list("output", "outputtwo", np.asarray([
                     synapse("V", w_e, T_syn)
-                ]), 4),
+                ]), 3),
                 synapse_list("_sync", "recall", np.asarray([
                     synapse("V", w_e, T_syn)
                 ]), 2),
                 synapse_list("ready", "_sync", np.asarray([
                     synapse("V", 0.5 * w_e, T_syn)
-                ]), 4)
+                ]), 3)
             ])
         }]
     },

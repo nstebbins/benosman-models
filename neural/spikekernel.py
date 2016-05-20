@@ -10,17 +10,22 @@ from neural.predefined_models import *
 
 class adj_matrix(object):
 
-    def __init__(self, neurons, synapses, neuron_names):
-        self.neurons = neurons
-        self.neuron_names = neuron_names
-        self.synapse_matrix = np.empty((neurons.size, neurons.size),
+    def __init__(self):
+        '''default constructor'''
+
+    def fill_in(self, neurons, synapses, neuron_names):
+        '''fill in matrix with synapses'''
+
+        synapse_matrix = np.empty((neurons.size, neurons.size),
             dtype = object)
 
         # fill in synapse matrix
         for synapse_list in synapses:
-            i = self.neuron_names.index(synapse_list.n_from)
-            j = self.neuron_names.index(synapse_list.n_to)
-            self.synapse_matrix[i][j] = synapse_list
+            i = neuron_names.index(synapse_list.n_from)
+            j = neuron_names.index(synapse_list.n_to)
+            synapse_matrix[i][j] = synapse_list
+
+        return(synapse_matrix)
 
     def simulate(self):
         '''update voltages for neurons'''
@@ -72,7 +77,7 @@ def plot_v(neurons):
 
     plt.show()
 
-def initialize_neurons(neuron_names, t, data = None):
+def init_neu(neuron_names, t, data = None):
     '''initialize neurons with some data, if necessary'''
 
     neurons = np.asarray([neuron(label, t) for label in neuron_names])
@@ -93,6 +98,9 @@ def len_neurons(f_name):
 def simulate_neurons(f_name, data = {}):
     '''implementation of a neural model'''
 
+    # time frame
+    t = np.multiply(TO_MS, np.arange(0, functions[f_name]["t"], 1e-4)) # time in MS
+
     # create queue with all network names
     tempq = [(f_name, -1, 0)] # (network name, parent pos, my pos)
     networkq = []
@@ -101,6 +109,7 @@ def simulate_neurons(f_name, data = {}):
 
     while tempq: # visit net and add all subnets
         curr, rootpos, currpos = tempq.pop(0)
+
         if "subnets" in functions[curr]:
             for subnet in functions[curr]["subnets"]:
                 tempq.append((subnet["name"], currpos, cumul_tot))
@@ -110,27 +119,34 @@ def simulate_neurons(f_name, data = {}):
 
     print(networkq)
 
+    # create adjacency matrix from queue
+
+    aug_matrix = adj_matrix()
+    aug_matrix.synapse_matrix = np.empty((cumul_tot, cumul_tot), dtype = object)
+
+    aug_matrix.neurons = []
+    aug_matrix.neuron_names = []
+
+    for net in networkq:
+        curr, rootpos, currpos = net
+
+        neu_names = functions[curr]["neuron_names"]
+        neurons = init_neu(neu_names, t)
+
+        # fill in portion of synapse matrix
+        sub_matrix = aug_matrix.fill_in(neurons, functions[curr]["synapses"], neu_names)
+
+        endpos = currpos + len_neurons(curr)
+        aug_matrix.synapse_matrix[currpos:endpos, currpos:endpos] = sub_matrix
+
+        aug_matrix.neuron_names += neu_names
+        aug_matrix.neurons += neurons
+
+        print(aug_matrix.synapse_matrix)
+
+    # aug_matrix.simulate() # simulate network
+
     return((functions[f_name]["output_idx"], neurons))
-
-    '''
-    f_p = functions[f_name] # parameters
-
-    # time frame & neurons
-    t = np.multiply(TO_MS, np.arange(0, f_p["t"], 1e-4)) # time in MS
-
-
-    neurons = initialize_neurons(
-        f_p["neuron_names"], t, data)
-
-    # initial adjacency matrix (without subnets)
-    syn_matrix = adj_matrix(neurons, f_p["synapses"], f_p["neuron_names"])
-
-    # augment_matrix(syn_matrix, f_p)
-
-    syn_matrix.simulate()
-
-    return((f_p["output_idx"], neurons))
-    '''
 
 def augment_matrix(syn_matrix, func):
     '''look at curr subnet of interest and add stuff to network'''

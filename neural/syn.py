@@ -16,11 +16,10 @@ class synapse_list(object):
         '''
             syntype //
             - specifies whether a connection is
-                (1) within the overall network
-                (2) from overall network to subnetwork
-                (3) within subnetwork
-                (4) from subnetwork to overall network
-            - this is used when augmenting the adjacency matrix with subnets
+                (1) within network
+                (2) from network to parent network
+                (3) from parent network to network
+            - used when augmenting the adjacency matrix with subnets
         '''
 
         if syntype is None:

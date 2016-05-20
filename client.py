@@ -15,7 +15,7 @@ def main():
     tcpsock.connect((host, port))
 
     messages = [
-        "linear_combination;"
+        "synchronizer;"
     ]
 
     '''
