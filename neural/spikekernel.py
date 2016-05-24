@@ -36,11 +36,11 @@ class adj_matrix(object):
         global V_t
         t = (self.neurons[0].t) # retrieve time window
         for tj in range(1, t.size):
-            for ni in range(self.neurons.size):
+            for ni in range(len(self.neurons)):
                 self.neurons[ni].next_v(tj)
                 if self.neurons[ni].v[tj] >= V_t:
                     # check adjacency matrix for synapses to send out
-                    for n_to in range(0, self.neurons.size):
+                    for n_to in range(0, len(self.neurons)):
                         if self.synapse_matrix[ni][n_to] is not None:
                             for syn in self.synapse_matrix[ni][n_to].synapses:
                                 self.synapse_prop(syn, n_to, tj)
@@ -95,10 +95,12 @@ def init_neu(neuron_names, t, data = None):
 
 def len_neurons(f_name):
     '''helper method: get # of highest-level neurons in a network'''
+
     return(len(functions[f_name]["neuron_names"]))
 
 def get_par_pos(augq, rootpos):
     '''helper method: get index of parent'''
+
     for i, elem in enumerate(augq):
         if elem[2] is rootpos: # 2 = currpos
             return(i)
@@ -127,7 +129,7 @@ def simulate_neurons(f_name, data = {}):
 
         networkq.append((curr, rootpos, currpos))
 
-    print(networkq) # COMPLETED NETWORKQ
+    # print(networkq) # COMPLETED NETWORKQ
 
     # ** initialize adjacency matrix from queue
 
@@ -140,7 +142,7 @@ def simulate_neurons(f_name, data = {}):
         curr, rootpos, currpos = net
         aug_matrix.neuron_names += functions[curr]["neuron_names"]
 
-    aug_matrix.neurons = init_neu(aug_matrix.neuron_names, t)
+    aug_matrix.neurons = init_neu(aug_matrix.neuron_names, t, data)
 
     # ** augment networkq so that it points forward (to children)
 
@@ -150,10 +152,9 @@ def simulate_neurons(f_name, data = {}):
     for i, net in enumerate(reversed(augq)):
         _, rootpos, _, _ = net
         if rootpos is not -1:
-            # 3 = children list
-            augq[get_par_pos(augq, rootpos)][3].append(i)
+            augq[get_par_pos(augq, rootpos)][3].insert(0, len(augq) - (i + 1)) # 3 = children list
 
-    print(augq) # COMPLETED AUGQ
+    # print(augq) # COMPLETED AUGQ
 
     # ** add synapses
 
@@ -169,47 +170,10 @@ def simulate_neurons(f_name, data = {}):
             for i, subnet in enumerate(functions[curr]["subnets"]):
                 child = augq[childposes[i]]
                 aug_matrix.fill_in(subnet["synapses"],
-                aug_matrix.neuron_names, currpos, child[2]) # 2 = currpos
+                    aug_matrix.neuron_names, currpos, child[2]) # 2 = currpos
 
-    print(aug_matrix.synapse_matrix) # COMPLETED SYNMATRIX
+    # print(aug_matrix.synapse_matrix) # COMPLETED SYNMATRIX
 
-    # aug_matrix.simulate() # simulate network
+    aug_matrix.simulate() # simulate network
 
     return((functions[f_name]["output_idx"], aug_matrix.neurons))
-
-def augment_matrix(syn_matrix, func):
-    '''look at curr subnet of interest and add stuff to network'''
-    '''NEEDS TO BE TWEAKED'''
-
-    if "subnets" not in func:
-        return syn_matrix
-    else:
-        for subnet in func["subnets"]:
-
-            sub_names = subnet["neuron_names"]
-
-            pre_sze = (syn_matrix.synapse_matrix).shape[0]
-            new_sze = len(sub_names) + curr_offset
-
-            sub_neurons = initialize_neurons(sub_names, t)
-
-            syn_matrix.neurons = np.concatenate((neurons, sub_neurons), axis = 0)
-            syn_matrix.neuron_names += sub_names
-
-            # sub matrix
-            sub_matrix = adj_matrix(sub_neurons,
-                functions[subnet["name"]]["synapses"],
-                functions[subnet["name"]]["neuron_names"]
-            )
-
-            # augmented matrix
-            aug_matrix = np.empty((new_sze, new_sze), dtype = object)
-            aug_matrix[:pre_sze, :pre_sze] = syn_matrix.synapse_matrix
-            aug_matrix[pre_sze:, pre_sze:] = sub_matrix.synapse_matrix
-
-            for synlist in subnet["synapses"]:
-                i = syn_matrix.neuron_names.index(synlist.n_from)
-                j = syn_matrix.neuron_names.index(synlist.n_to)
-                aug_matrix[i][j] = synlist
-
-            syn_matrix.synapse_matrix = aug_matrix

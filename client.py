@@ -15,7 +15,7 @@ def main():
     tcpsock.connect((host, port))
 
     messages = [
-        "synchronizer;"
+        "synchronizer;inputone 1000 inputone 1600 inputtwo 2000 inputtwo 2700"
     ]
 
     '''
