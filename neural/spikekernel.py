@@ -8,16 +8,29 @@ from neural.adjmatrix import *
 
 def plot_v(neurons):
 
-    fig = plt.figure(1, figsize=(15, 10))
+    fig = plt.figure(1, figsize = (15, 10), facecolor = 'white')
+
+    big_ax = fig.add_subplot(111) # overarching subplot
+
+    # Turn off axis lines and ticks of the big subplot
+    big_ax.spines['top'].set_color('none')
+    big_ax.spines['bottom'].set_color('none')
+    big_ax.spines['left'].set_color('none')
+    big_ax.spines['right'].set_color('none')
+    big_ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
+
+    big_ax.set_xlabel('time (ms)')
+    big_ax.set_ylabel('voltage (mV)')
 
     for i in range(neurons.size):
         num = int(str(neurons.size) + "1" + str(i+1))
 
         ax = fig.add_subplot(num)
         ax.plot(neurons[i].t, neurons[i].v)
-        ax.set_xlabel('time (ms)')
-        ax.set_ylabel('voltage (mV)')
         ax.set_title('voltage for ' + neurons[i].ID)
+        start, end = ax.get_xlim()
+        ax.xaxis.set_ticks(np.arange(start, end, 100))
+        ax.grid(True)
 
     plt.show()
 
