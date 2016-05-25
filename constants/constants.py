@@ -11,5 +11,10 @@ g_mult = V_t * tau_m / tau_f
 w_acc = V_t * tau_m / T_max; w_bar_acc = V_t * tau_m / T_cod
 
 # coefficient constants
+alpha0 = 1e-4 * TO_MS * 10
+alpha1 = 1e-4 * TO_MS * 10
+
+''' old coeff values (effective for testing)
 alpha0 = 0.4
 alpha1 = 0.6
+'''

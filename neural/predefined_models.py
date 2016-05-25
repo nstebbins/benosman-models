@@ -236,6 +236,52 @@ functions = {
             ]))
         ])
     },
+    "integrator" : { # where init = always positive
+        "t" : 2,
+        "neuron_names" : ["input+", "input-", "start", "init",
+            "output+", "output-", "new_input", "bridge+", "bridge-"],
+        "output_idx" : [0, 2, 3, 4, 6, 7, 8, 9, 11],
+        "synapses" : np.asarray([]),
+        "subnets" : [{
+            "name" : "linear_combination",
+            "synapses" : np.asarray([
+                synapse_list("input+", "inputtwo+", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]), 2),
+                synapse_list("input-", "inputtwo-", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]), 2),
+                synapse_list("start", "inputtwo+", np.asarray([
+                    synapse("V", w_e, T_syn),
+                    synapse("V", w_e, T_syn + T_min)
+                ]), 2),
+                synapse_list("init", "inputone+", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]), 2),
+                synapse_list("output+", "bridge+", np.asarray([
+                    synapse("V", w_e, 0)
+                ]), 3),
+                synapse_list("output-", "bridge-", np.asarray([
+                    synapse("V", w_e, 0)
+                ]), 3),
+                synapse_list("bridge+", "inputone+", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]), 2),
+                synapse_list("bridge-", "inputone-", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]), 2),
+                synapse_list("start", "new_input", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]), 3),
+                synapse_list("output+", "output+", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]), 3),
+                synapse_list("output-", "output-", np.asarray([
+                    synapse("V", w_e, T_syn)
+                ]), 3)
+            ])
+        }]
+    },
     "linear_combination" : {
         "t" : 1,
         "neuron_names" : ["inputone+", "inputone-", "inputtwo+", "inputtwo-",

@@ -14,8 +14,9 @@ def main():
     tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     tcpsock.connect((host, port))
 
+    # NOTE: example below WITHOUT init neuron (simplification) + in terms of mV (mValue) * 10
     messages = [
-        "linear_combination;inputone+ 1000 inputone+ 1200 inputtwo- 1600 inputtwo- 2200"
+        "integrator;start 100 input+ 3000 input+ 4000 input+ 5200 input+ 5900 init 100 init 600"
     ]
 
     '''
@@ -26,7 +27,7 @@ def main():
         "non_inverting_memory;input 2000 input 2200 recall 5000",
         "synchronizer;inputone 1000 inputone 1600 inputtwo 2000 inputtwo 2700",
         "full_subtractor;inputone 2000 inputone 2900 inputtwo 2000 inputtwo 2400",
-        "linear_combination;input0+ 1000 input0+ 1200 input1- 1600 input1- 2200"
+        "linear_combination;input0+ 1000 input0+ 2000 input1- 1600 input1- 2200"
     ]
     '''
 
