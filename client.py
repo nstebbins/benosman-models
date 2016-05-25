@@ -16,7 +16,7 @@ def main():
 
     # NOTE: example below WITHOUT init neuron (simplification) + in terms of mV (mValue) * 10
     messages = [
-        "integrator;start 100 input+ 3000 input+ 4000 input+ 5200 input+ 5900 init 100 init 600"
+        "integrator;start 100 input- 3000 input- 4000 input- 5200 input- 5300 init 100 init 600"
     ]
 
     '''

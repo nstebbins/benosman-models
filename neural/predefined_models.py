@@ -240,7 +240,7 @@ functions = {
         "t" : 2,
         "neuron_names" : ["input+", "input-", "start", "init",
             "output+", "output-", "new_input", "bridge+", "bridge-"],
-        "output_idx" : [0, 2, 3, 4, 6, 7, 8, 9, 11],
+        "output_idx" : [4, 5],
         "synapses" : np.asarray([]),
         "subnets" : [{
             "name" : "linear_combination",
