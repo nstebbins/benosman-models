@@ -1,7 +1,7 @@
+from constants.constants import *
 
-from constants.constants import * 
 
-class adj_matrix(object):
+class AdjMatrix(object):
 
     def __init__(self):
         '''default constructor'''
@@ -11,12 +11,15 @@ class adj_matrix(object):
 
         for syn_list in synapses:
 
-            if syn_list.syntype is 1: # net -> net
-                off1 = curr_o; off2 = curr_o
-            elif syn_list.syntype is 2: # net -> parent
-                off1 = curr_o; off2 = child_o
-            else: # parent -> net
-                off1 = child_o; off2 = curr_o
+            if syn_list.syntype is 1:  # net -> net
+                off1 = curr_o;
+                off2 = curr_o
+            elif syn_list.syntype is 2:  # net -> parent
+                off1 = curr_o;
+                off2 = child_o
+            else:  # parent -> net
+                off1 = child_o;
+                off2 = curr_o
 
             i = off1 + neuron_names[off1:].index(syn_list.n_from)
             j = off2 + neuron_names[off2:].index(syn_list.n_to)
@@ -27,7 +30,7 @@ class adj_matrix(object):
         '''update voltages for neurons'''
 
         global V_t
-        t = (self.neurons[0].t) # retrieve time window
+        t = (self.neurons[0].t)  # retrieve time window
         for tj in range(1, t.size):
             for ni in range(len(self.neurons)):
                 self.neurons[ni].next_v(tj)
@@ -50,10 +53,10 @@ class adj_matrix(object):
             self.neurons[n_to].g_e[t_delay] += syn.s_weight
         elif syn.s_type is "g_f":
             self.neurons[n_to].g_f[t_delay] += syn.s_weight
-        else: # gate synapse
+        else:  # gate synapse
             if syn.s_weight is 1:
                 self.neurons[n_to].gate[t_delay] = 1
             elif syn.s_weight is -1:
                 self.neurons[n_to].gate[t_delay] = 0
             else:
-                pass # throw error
+                pass  # throw error

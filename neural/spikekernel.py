@@ -37,7 +37,7 @@ def plot_v(neurons):
 def init_neu(neuron_names, t, data = None):
     '''initialize neurons with some data, if necessary'''
 
-    neurons = [neuron(label, t) for label in neuron_names]
+    neurons = [Neuron(label, t) for label in neuron_names]
 
     # setting stimuli spikes
     if data is not None:
@@ -87,7 +87,7 @@ def simulate_neurons(f_name, data = {}):
 
     # ** initialize adjacency matrix from queue
 
-    aug_matrix = adj_matrix()
+    aug_matrix = AdjMatrix()
     aug_matrix.synapse_matrix = np.empty((cumul_tot, cumul_tot), dtype = object)
 
     aug_matrix.neuron_names = []

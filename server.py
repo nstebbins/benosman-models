@@ -1,11 +1,11 @@
-
 import socket, threading, pickle
 import numpy as np
 
 import tcp.tcp as tcp
 import neural.spikekernel as spikekernel
 
-class client_thread(threading.Thread):
+
+class ClientThread(threading.Thread):
 
     def __init__(self, ip, port, socket):
         threading.Thread.__init__(self)
@@ -14,9 +14,9 @@ class client_thread(threading.Thread):
         self.socket = socket
         print("[+] new thread started for " + ip + ":" + str(port))
 
-    def parse_message(self, input): # binary to string to (string, dict)
+    def parse_message(self, input):  # binary to string to (string, dict)
 
-        input_str = input.decode('ascii') # convert to string
+        input_str = input.decode('ascii')  # convert to string
 
         # e.g. INVERTING_MEMORY;INPUT 2000 INPUT 2900 RECALL 5000
         f_specs = input_str.split(";")
@@ -29,11 +29,11 @@ class client_thread(threading.Thread):
 
         for i in range(0, len(f_inputs), 2):
             if f_inputs[i] in data:
-                (data[f_inputs[i]]).append(int(f_inputs[i+1]))
+                (data[f_inputs[i]]).append(int(f_inputs[i + 1]))
             else:
-                data[f_inputs[i]] = [int(f_inputs[i+1])]
+                data[f_inputs[i]] = [int(f_inputs[i + 1])]
 
-        return((f_name, data))
+        return ((f_name, data))
 
     def run(self):
 
@@ -45,11 +45,12 @@ class client_thread(threading.Thread):
                 f_name, data = self.parse_message(rcv)
                 outputs, neurons = spikekernel.simulate_neurons(f_name, data)
                 tcp.send_msg(self.socket,
-                    pickle.dumps(np.take(neurons, outputs), protocol = 0))
+                             pickle.dumps(np.take(neurons, outputs), protocol=0))
             else:
                 break
 
         print("[client disconnected]> " + self.ip + ":" + str(self.port))
+
 
 def main():
     host = "0.0.0.0"
@@ -61,18 +62,19 @@ def main():
     # below option is effectively workaround for "ADDR ALREADY IN USE"
     tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    tcpsock.bind((host,port))
+    tcpsock.bind((host, port))
     threads = []
 
-    tcpsock.listen(4) # arg: max # of queued connections allowed
+    tcpsock.listen(4)  # arg: max # of queued connections allowed
 
-    while True: # server keeps running
+    while True:  # server keeps running
         (clientsock, (ip, port)) = tcpsock.accept()
-        newthread = client_thread(ip, port, clientsock)
-        newthread.start() # start thread to handle client
+        newthread = ClientThread(ip, port, clientsock)
+        newthread.start()  # start thread to handle client
         threads.append(newthread)
 
     for t in threads:
         t.join()
+
 
 main()
