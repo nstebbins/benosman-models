@@ -8,17 +8,13 @@ This project uses modeling of neural networks as a general-purpose computational
 
 ### Usage
 
-To test various networks, you will need to run both a client (with operation requests) and a server. The server is multithreaded and allows a maximum of four queued connections at a time. 
+To test various networks, you just need to run `app.py`.
 
 ```bash
-python server.py
+python app.py
 ```
 
-```bash
-python client.py
-```
-
-The networks currently implemented are: 
+The networks currently implemented are:
 
 * Inverting Memory
 * Logarithm
