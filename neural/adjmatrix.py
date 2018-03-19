@@ -4,21 +4,21 @@ from constants.constants import *
 class AdjMatrix(object):
 
     def __init__(self):
-        '''default constructor'''
+        """default constructor"""
 
     def fill_in(self, synapses, neuron_names, curr_o, child_o):
-        '''fill in matrix with synapses'''
+        """fill in matrix with synapses"""
 
         for syn_list in synapses:
 
-            if syn_list.syntype is 1:  # net -> net
-                off1 = curr_o;
+            if syn_list.synapse_type is 1:  # net -> net
+                off1 = curr_o
                 off2 = curr_o
-            elif syn_list.syntype is 2:  # net -> parent
-                off1 = curr_o;
+            elif syn_list.synapse_type is 2:  # net -> parent
+                off1 = curr_o
                 off2 = child_o
             else:  # parent -> net
-                off1 = child_o;
+                off1 = child_o
                 off2 = curr_o
 
             i = off1 + neuron_names[off1:].index(syn_list.n_from)
@@ -27,7 +27,7 @@ class AdjMatrix(object):
             self.synapse_matrix[i][j] = syn_list
 
     def simulate(self):
-        '''update voltages for neurons'''
+        """update voltages for neurons"""
 
         global V_t
         t = (self.neurons[0].t)  # retrieve time window
@@ -42,7 +42,7 @@ class AdjMatrix(object):
                                 self.synapse_prop(syn, n_to, tj)
 
     def synapse_prop(self, syn, n_to, tj):
-        '''propagate the synapse through the adjacency matrix'''
+        """propagate the synapse through the adjacency matrix"""
 
         global T_TO_POS
         t_delay = tj + int(T_TO_POS * (syn.s_delay + T_neu))

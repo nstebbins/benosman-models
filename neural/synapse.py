@@ -8,13 +8,13 @@ class Synapse(object):
 
 class SynapseList(object):
 
-    def __init__(self, n_from, n_to, synapses, syntype=None):
+    def __init__(self, n_from, n_to, synapses, synapse_type=None):
         self.n_from = n_from
         self.n_to = n_to
         self.synapses = synapses
 
         '''
-            syntype //
+            synapse_type //
             - specifies whether a connection is
                 (1) within network
                 (2) from network to child network
@@ -22,7 +22,7 @@ class SynapseList(object):
             - used when augmenting the adjacency matrix with subnets
         '''
 
-        if syntype is None:
-            self.syntype = 1
+        if synapse_type is None:
+            self.synapse_type = 1
         else:
-            self.syntype = syntype
+            self.synapse_type = synapse_type

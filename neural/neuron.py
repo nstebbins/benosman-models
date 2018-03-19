@@ -21,9 +21,9 @@ class Neuron(object):
         global V_t, V_reset, tau_m, tau_f
 
         if self.v[i - 1] >= V_t:
-            v_p = V_reset;
-            ge_p = 0;
-            gf_p = 0;
+            v_p = V_reset
+            ge_p = 0
+            gf_p = 0
             gate_p = 0
         else:
             v_p = self.v[i - 1]

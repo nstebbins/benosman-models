@@ -33,7 +33,7 @@ class ClientThread(threading.Thread):
             else:
                 data[f_inputs[i]] = [int(f_inputs[i + 1])]
 
-        return ((f_name, data))
+        return f_name, data
 
     def run(self):
 
