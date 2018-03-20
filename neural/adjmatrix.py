@@ -1,5 +1,4 @@
-from constants.constants import *
-
+from neural.constants import *
 
 class AdjMatrix(object):
 
@@ -29,7 +28,6 @@ class AdjMatrix(object):
     def simulate(self):
         """update voltages for neurons"""
 
-        global V_t
         t = (self.neurons[0].t)  # retrieve time window
         for tj in range(1, t.size):
             for ni in range(len(self.neurons)):
@@ -44,7 +42,6 @@ class AdjMatrix(object):
     def synapse_prop(self, syn, n_to, tj):
         """propagate the synapse through the adjacency matrix"""
 
-        global T_TO_POS
         t_delay = tj + int(T_TO_POS * (syn.s_delay + T_neu))
 
         if syn.s_type is "V":

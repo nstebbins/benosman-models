@@ -1,6 +1,6 @@
 import numpy as np
 
-from constants.constants import *
+from neural.constants import *
 
 
 class Neuron(object):
@@ -18,7 +18,6 @@ class Neuron(object):
 
         # constants (time in mS; V in mV)
         dt = self.t[1] - self.t[0]
-        global V_t, V_reset, tau_m, tau_f
 
         if self.v[i - 1] >= V_t:
             v_p = V_reset
