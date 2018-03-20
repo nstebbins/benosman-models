@@ -3,7 +3,7 @@ import numpy as np
 from .synapse import Synapse, SynapseList
 from .constants import w_e, w_acc, w_bar_acc, w_i, g_mult, T_syn, T_min, T_neu
 
-functions = {
+neural_functions = {
     "logarithm": {
         "t": 0.5,
         "neuron_names": ["input", "first", "last", "acc", "output"],

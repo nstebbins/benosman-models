@@ -9,8 +9,7 @@ class AdjMatrix(object):
     def __init__(self, neurons: list, synapses: np.ndarray) -> None:
         self.neurons = neurons
         self.synapse_matrix = np.empty((len(self.neurons), len(self.neurons)), dtype=object)
-
-        neuron_names = [neuron.name for neuron in neurons]
+        neuron_names = [neuron.name for neuron in self.neurons]
         for synapse_list in synapses:
             i = neuron_names.index(synapse_list.n_from)
             j = neuron_names.index(synapse_list.n_to)
@@ -34,7 +33,6 @@ class AdjMatrix(object):
         """propagate the synapse through the adjacency matrix"""
 
         t_delay = tj + int(T_TO_POS * (syn.s_delay + T_neu))
-
         if syn.s_type is "V":
             self.neurons[n_to].v[t_delay] += syn.s_weight
         elif syn.s_type is "g_e":

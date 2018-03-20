@@ -9,16 +9,17 @@ class Neuron(object):
         self.name = name
         self.t = t
         self.v = np.zeros(np.shape(t))
-
         self.g_e = np.zeros(np.shape(t))
         self.g_f = np.zeros(np.shape(t))
         self.gate = np.zeros(np.shape(t))
 
-    def next_v(self, i: int) -> None:  # compute voltage at pos i
+    def populate_spikes_from_data(self, spike_indices: list) -> None:
+        for spike_idx in spike_indices:
+            self.v[spike_idx] = V_t
 
+    def next_v(self, i: int) -> None:  # compute voltage at pos i
         # constants (time in mS; V in mV)
         dt = self.t[1] - self.t[0]
-
         if self.v[i - 1] >= V_t:
             v_p = V_reset
             ge_p = 0
@@ -29,7 +30,7 @@ class Neuron(object):
             ge_p = self.g_e[i - 1]
             gf_p = self.g_f[i - 1]
             gate_p = self.gate[i - 1]
-
+        # TODO: maybe i can get rid of the self references on the RHS below
         self.g_e[i] = self.g_e[i] + ge_p
         self.gate[i] = max([self.gate[i], gate_p])
         self.g_f[i] = self.g_f[i] + gf_p + dt * (-gf_p / tau_f)

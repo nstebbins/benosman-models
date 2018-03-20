@@ -3,12 +3,14 @@ import numpy as np
 
 from .adjmatrix import AdjMatrix
 from .neuron import Neuron
-from .predefined_models import functions
-from .constants import V_t, TO_MS
+from .predefined_models import neural_functions
+from .constants import TO_MS
 
 
 # TODO: remove warning when running this
-def plot_v(neurons: np.ndarray) -> None:
+def plot_output_neurons(output_neurons: list, outputs: list) -> None:
+    output_neurons = np.take(output_neurons, outputs)
+
     fig = plt.figure(1, figsize=(15, 10), facecolor='white')
 
     big_ax = fig.add_subplot(111)  # overarching subplot
@@ -23,12 +25,12 @@ def plot_v(neurons: np.ndarray) -> None:
     big_ax.set_xlabel('time (ms)')
     big_ax.set_ylabel('voltage (mV)')
 
-    for i in range(neurons.size):
-        num = int(str(neurons.size) + "1" + str(i + 1))
+    for i in range(output_neurons.size):
+        num = int(str(output_neurons.size) + "1" + str(i + 1))
 
         ax = fig.add_subplot(num)
-        ax.plot(neurons[i].t, neurons[i].v)
-        ax.set_title('voltage for ' + neurons[i].name)
+        ax.plot(output_neurons[i].t, output_neurons[i].v)
+        ax.set_title('voltage for ' + output_neurons[i].name)
         start, end = ax.get_xlim()
         ax.xaxis.set_ticks(np.arange(start, end, 100))
         ax.grid(True)
@@ -36,35 +38,19 @@ def plot_v(neurons: np.ndarray) -> None:
     plt.show()
 
 
-# TODO: probably put this somewhere else
-def initialize_neurons(neuron_names: list, t: np.ndarray, data: dict = None) -> list:
-    """initialize neurons with some data, if necessary"""
-
-    neurons = [Neuron(neuron_name, t) for neuron_name in neuron_names]
-
-    # setting stimuli spikes
-    if data is not None:
-        for key, value in data.items():  # for each neuron
-            for j in list(value):
-                neurons[neuron_names.index(key)].v[j] = V_t
-
-    return neurons
-
-
-def simulate_neurons(f_name: str, data: dict) -> (list, list):
+def simulate_neurons(neural_function_name: str, data: dict) -> (list, list):
     """implementation of a neural model"""
 
-    print("f_name: " + f_name)
-    print("data" + str(data))
+    neural_function = neural_functions[neural_function_name]
+    t = np.multiply(TO_MS, np.arange(0, neural_function["t"], 1e-4))  # time in MS
 
-    # time frame
-    t = np.multiply(TO_MS, np.arange(0, functions[f_name]["t"], 1e-4))  # time in MS
-
-    # adjacency matrix
-    neurons = initialize_neurons(functions[f_name]["neuron_names"], t, data)
-    synapses = functions[f_name]["synapses"]
+    # neurons and synapses
+    neurons = [Neuron(neuron_name, t) for neuron_name in neural_function["neuron_names"]]
+    for neuron_name, spike_indices in data.items():
+        neurons[neural_function["neuron_names"].index(neuron_name)].populate_spikes_from_data(spike_indices)
+    synapses = neural_function["synapses"]
 
     adj_matrix = AdjMatrix(neurons, synapses)
     adj_matrix.simulate()
 
-    return functions[f_name]["output_idx"], adj_matrix.neurons
+    return neural_function["output_idx"], adj_matrix.neurons

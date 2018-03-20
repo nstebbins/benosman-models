@@ -5,6 +5,7 @@ import numpy as np
 # TODO: re-write this whole thing
 def main():
 
+    # TODO: maybe move this in like an examples/ folder?
     # messages = [
     #     "integrator;start 100 input- 3000 input- 4000 input- 5200 input- 5300 init 100 init 600",
     #     "logarithm;input 2000 input 2700",
@@ -14,8 +15,7 @@ def main():
     #     "full_subtractor;inputone 2000 inputone 2900 inputtwo 2000 inputtwo 2400",
     # ]
     outputs, neurons = spikekernel.simulate_neurons("logarithm", {'input': [2000, 2700]})
-    # TODO: np take logic should be moved elsewhere
-    spikekernel.plot_v(np.take(neurons, outputs))
+    spikekernel.plot_output_neurons(neurons, outputs)
 
 
 main()
