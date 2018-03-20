@@ -1,11 +1,12 @@
 import numpy as np
 
-from neural.constants import *
+from .synapse import Synapse
+from .constants import T_TO_POS, T_neu, V_t
 
 
 class AdjMatrix(object):
 
-    def __init__(self, neurons, synapses):
+    def __init__(self, neurons: list, synapses: np.ndarray) -> None:
         self.neurons = neurons
         self.synapse_matrix = np.empty((len(self.neurons), len(self.neurons)), dtype=object)
 
@@ -15,7 +16,7 @@ class AdjMatrix(object):
             j = neuron_names.index(synapse_list.n_to)
             self.synapse_matrix[i][j] = synapse_list
 
-    def simulate(self):
+    def simulate(self) -> None:
         """update voltages for neurons"""
 
         t = self.neurons[0].t  # retrieve time window
@@ -29,7 +30,7 @@ class AdjMatrix(object):
                             for syn in self.synapse_matrix[ni][n_to].synapses:
                                 self.synapse_prop(syn, n_to, tj)
 
-    def synapse_prop(self, syn, n_to, tj):
+    def synapse_prop(self, syn: Synapse, n_to: int, tj: float) -> None:
         """propagate the synapse through the adjacency matrix"""
 
         t_delay = tj + int(T_TO_POS * (syn.s_delay + T_neu))

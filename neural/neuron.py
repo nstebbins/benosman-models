@@ -1,11 +1,11 @@
 import numpy as np
 
-from neural.constants import *
+from .constants import V_reset, V_t, tau_f, tau_m
 
 
 class Neuron(object):
 
-    def __init__(self, name, t):
+    def __init__(self, name: str, t: np.ndarray) -> None:
         self.name = name
         self.t = t
         self.v = np.zeros(np.shape(t))
@@ -14,7 +14,7 @@ class Neuron(object):
         self.g_f = np.zeros(np.shape(t))
         self.gate = np.zeros(np.shape(t))
 
-    def next_v(self, i):  # compute voltage at pos i
+    def next_v(self, i: int) -> None:  # compute voltage at pos i
 
         # constants (time in mS; V in mV)
         dt = self.t[1] - self.t[0]
