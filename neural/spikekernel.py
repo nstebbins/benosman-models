@@ -48,38 +48,25 @@ def init_neu(neuron_names, t, data=None):
     return neurons
 
 
-def len_neurons(f_name):
-    """helper method: get # of highest-level neurons in a network"""
-
-    return len(functions[f_name]["neuron_names"])
-
-
-def get_par_pos(augq, rootpos):
-    """helper method: get index of parent"""
-
-    for i, elem in enumerate(augq):
-        if elem[2] is rootpos:  # 2 = currpos
-            return i
-    return -1  # error
-
-
-def simulate_neurons(f_name, data={}):
+def simulate_neurons(f_name, data=None):
     """implementation of a neural model"""
 
+    if data is None:
+        data = {}
     print("f_name: " + f_name)
-    print("data")
-    print(data)
+    print("data" + str(data))
 
     # time frame
     t = np.multiply(TO_MS, np.arange(0, functions[f_name]["t"], 1e-4))  # time in MS
 
     # adjacency matrix
+    len_neurons = len(functions[f_name]["neuron_names"])
 
-    adj_matrix = AdjMatrix()
-    len_neu = len_neurons(f_name)
-    adj_matrix.synapse_matrix = np.empty((len_neu, len_neu), dtype=object)
-    adj_matrix.neuron_names = functions[f_name]["neuron_names"]
-    adj_matrix.neurons = init_neu(adj_matrix.neuron_names, t, data)
+    synapse_matrix = np.empty((len_neurons, len_neurons), dtype=object)
+    neuron_names = functions[f_name]["neuron_names"]
+    neurons = init_neu(neuron_names, t, data)
+
+    adj_matrix = AdjMatrix(neurons, neuron_names, synapse_matrix)
 
     # synapse matrix
     adj_matrix.fill_in(functions[f_name]["synapses"], adj_matrix.neuron_names)

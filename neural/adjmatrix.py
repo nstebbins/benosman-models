@@ -1,24 +1,25 @@
 from neural.constants import *
 
+
 class AdjMatrix(object):
 
-    def __init__(self):
-        """default constructor"""
+    def __init__(self, neurons, neuron_names, synapse_matrix):
+        self.neurons = neurons
+        self.neuron_names = neuron_names
+        self.synapse_matrix = synapse_matrix
 
     def fill_in(self, synapses, neuron_names):
         """fill in matrix with synapses"""
 
         for syn_list in synapses:
-
             i = neuron_names.index(syn_list.n_from)
             j = neuron_names.index(syn_list.n_to)
-
             self.synapse_matrix[i][j] = syn_list
 
     def simulate(self):
         """update voltages for neurons"""
 
-        t = (self.neurons[0].t)  # retrieve time window
+        t = self.neurons[0].t  # retrieve time window
         for tj in range(1, t.size):
             for ni in range(len(self.neurons)):
                 self.neurons[ni].next_v(tj)
