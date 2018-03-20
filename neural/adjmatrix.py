@@ -1,7 +1,7 @@
 import numpy as np
 
 from .synapse import Synapse
-from .constants import T_TO_POS, T_neu, V_t
+from .constants import T_TO_POS, T_NEU, V_THRESHOLD
 
 
 class AdjMatrix(object):
@@ -22,7 +22,7 @@ class AdjMatrix(object):
         for tj in range(1, t.size):
             for ni in range(len(self.neurons)):
                 self.neurons[ni].next_v(tj)
-                if self.neurons[ni].v[tj] >= V_t:
+                if self.neurons[ni].v[tj] >= V_THRESHOLD:
                     # check adjacency matrix for synapses to send out
                     for n_to in range(0, len(self.neurons)):
                         if self.synapse_matrix[ni][n_to] is not None:
@@ -32,17 +32,12 @@ class AdjMatrix(object):
     def synapse_prop(self, syn: Synapse, n_to: int, tj: float) -> None:
         """propagate the synapse through the adjacency matrix"""
 
-        t_delay = tj + int(T_TO_POS * (syn.s_delay + T_neu))
+        t_delay = tj + int(T_TO_POS * (syn.s_delay + T_NEU))
         if syn.s_type is "V":
             self.neurons[n_to].v[t_delay] += syn.s_weight
         elif syn.s_type is "g_e":
             self.neurons[n_to].g_e[t_delay] += syn.s_weight
         elif syn.s_type is "g_f":
             self.neurons[n_to].g_f[t_delay] += syn.s_weight
-        else:  # gate synapse
-            if syn.s_weight is 1:
-                self.neurons[n_to].gate[t_delay] = 1
-            elif syn.s_weight is -1:
-                self.neurons[n_to].gate[t_delay] = 0
-            else:
-                pass  # throw error
+        elif syn.s_type is "gate":  # gate synapse
+            self.neurons[n_to].gate[t_delay] = {1: 1, -1: 0}[syn.s_weight]

@@ -1,18 +1,19 @@
-# constants (time constants in mS)
+# time constants in ms
 TO_MS = 1000
 T_TO_POS = 10
-T_min = 10
-T_cod = 100
-T_max = T_min + T_cod  # time range
-T_syn = 1
-T_neu = 0.1  # std. delays (slightly modified T_neu)
+T_MIN = 10
+T_COD = 100
+T_MAX = T_MIN + T_COD  # time range
+T_SYN = 1
+T_NEU = 0.1  # slightly modified from paper
 
-tau_m = 100 * TO_MS
-tau_f = 20
-V_t = 10
-V_reset = 0  # voltage model params
-w_e = V_t
-w_i = -V_t  # std. voltage weights
-g_mult = V_t * tau_m / tau_f
-w_acc = V_t * tau_m / T_max
-w_bar_acc = V_t * tau_m / T_cod
+# voltage constants in mV
+TAU_M = 100 * TO_MS
+TAU_F = 20
+V_THRESHOLD = 10
+V_RESET = 0  # voltage model params
+W_E = V_THRESHOLD
+W_I = -V_THRESHOLD  # std. voltage weights
+G_MULT = V_THRESHOLD * TAU_M / TAU_F
+W_ACC = V_THRESHOLD * TAU_M / T_MAX
+W_BAR_ACC = V_THRESHOLD * TAU_M / T_COD

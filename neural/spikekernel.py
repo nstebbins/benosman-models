@@ -38,15 +38,15 @@ def plot_output_neurons(output_neurons: list, outputs: list) -> None:
     plt.show()
 
 
-def simulate_neurons(neural_function_name: str, data: dict) -> (list, list):
+def simulate_neurons(data: dict) -> (list, list):
     """implementation of a neural model"""
 
-    neural_function = neural_functions[neural_function_name]
+    neural_function = neural_functions[data['function']]
     t = np.multiply(TO_MS, np.arange(0, neural_function["t"], 1e-4))  # time in MS
 
     # neurons and synapses
     neurons = [Neuron(neuron_name, t) for neuron_name in neural_function["neuron_names"]]
-    for neuron_name, spike_indices in data.items():
+    for neuron_name, spike_indices in data['initial_values'].items():
         neurons[neural_function["neuron_names"].index(neuron_name)].populate_spikes_from_data(spike_indices)
     synapses = neural_function["synapses"]
 
