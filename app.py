@@ -2,6 +2,7 @@ import neural.spikekernel as spikekernel
 import numpy as np
 
 
+# TODO: re-write this whole thing
 def main():
 
     # messages = [
@@ -13,6 +14,7 @@ def main():
     #     "full_subtractor;inputone 2000 inputone 2900 inputtwo 2000 inputtwo 2400",
     # ]
     outputs, neurons = spikekernel.simulate_neurons("logarithm", {'input': [2000, 2700]})
+    # TODO: np take logic should be moved elsewhere
     spikekernel.plot_v(np.take(neurons, outputs))
 
 

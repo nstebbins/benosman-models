@@ -1,12 +1,14 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
-from neural.neuron import *
-from neural.predefined_models import *
-from neural.adjmatrix import *
+from .adjmatrix import AdjMatrix
+from .neuron import Neuron
+from .predefined_models import functions
+from .constants import V_t, TO_MS
 
 
 # TODO: remove warning when running this
-def plot_v(neurons):
+def plot_v(neurons: np.ndarray) -> None:
     fig = plt.figure(1, figsize=(15, 10), facecolor='white')
 
     big_ax = fig.add_subplot(111)  # overarching subplot
@@ -35,7 +37,7 @@ def plot_v(neurons):
 
 
 # TODO: probably put this somewhere else
-def initialize_neurons(neuron_names, t, data=None):
+def initialize_neurons(neuron_names: list, t: np.ndarray, data: dict = None) -> list:
     """initialize neurons with some data, if necessary"""
 
     neurons = [Neuron(neuron_name, t) for neuron_name in neuron_names]
@@ -49,7 +51,7 @@ def initialize_neurons(neuron_names, t, data=None):
     return neurons
 
 
-def simulate_neurons(f_name, data):
+def simulate_neurons(f_name: str, data: dict) -> (list, list):
     """implementation of a neural model"""
 
     print("f_name: " + f_name)

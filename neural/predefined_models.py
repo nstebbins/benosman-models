@@ -1,7 +1,7 @@
 import numpy as np
 
-from neural.synapse import *
-from neural.constants import *
+from .synapse import Synapse, SynapseList
+from .constants import w_e, w_acc, w_bar_acc, w_i, g_mult, T_syn, T_min, T_neu
 
 functions = {
     "logarithm": {
