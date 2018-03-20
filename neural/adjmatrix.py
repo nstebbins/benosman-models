@@ -1,20 +1,19 @@
+import numpy as np
+
 from neural.constants import *
 
 
 class AdjMatrix(object):
 
-    def __init__(self, neurons, neuron_names, synapse_matrix):
+    def __init__(self, neurons, synapses):
         self.neurons = neurons
-        self.neuron_names = neuron_names
-        self.synapse_matrix = synapse_matrix
+        self.synapse_matrix = np.empty((len(self.neurons), len(self.neurons)), dtype=object)
 
-    def fill_in(self, synapses, neuron_names):
-        """fill in matrix with synapses"""
-
-        for syn_list in synapses:
-            i = neuron_names.index(syn_list.n_from)
-            j = neuron_names.index(syn_list.n_to)
-            self.synapse_matrix[i][j] = syn_list
+        neuron_names = [neuron.name for neuron in neurons]
+        for synapse_list in synapses:
+            i = neuron_names.index(synapse_list.n_from)
+            j = neuron_names.index(synapse_list.n_to)
+            self.synapse_matrix[i][j] = synapse_list
 
     def simulate(self):
         """update voltages for neurons"""

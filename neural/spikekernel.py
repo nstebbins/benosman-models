@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 
 from neural.neuron import *
@@ -6,6 +5,7 @@ from neural.predefined_models import *
 from neural.adjmatrix import *
 
 
+# TODO: remove warning when running this
 def plot_v(neurons):
     fig = plt.figure(1, figsize=(15, 10), facecolor='white')
 
@@ -26,7 +26,7 @@ def plot_v(neurons):
 
         ax = fig.add_subplot(num)
         ax.plot(neurons[i].t, neurons[i].v)
-        ax.set_title('voltage for ' + neurons[i].ID)
+        ax.set_title('voltage for ' + neurons[i].name)
         start, end = ax.get_xlim()
         ax.xaxis.set_ticks(np.arange(start, end, 100))
         ax.grid(True)
@@ -34,10 +34,11 @@ def plot_v(neurons):
     plt.show()
 
 
-def init_neu(neuron_names, t, data=None):
+# TODO: probably put this somewhere else
+def initialize_neurons(neuron_names, t, data=None):
     """initialize neurons with some data, if necessary"""
 
-    neurons = [Neuron(label, t) for label in neuron_names]
+    neurons = [Neuron(neuron_name, t) for neuron_name in neuron_names]
 
     # setting stimuli spikes
     if data is not None:
@@ -48,11 +49,9 @@ def init_neu(neuron_names, t, data=None):
     return neurons
 
 
-def simulate_neurons(f_name, data=None):
+def simulate_neurons(f_name, data):
     """implementation of a neural model"""
 
-    if data is None:
-        data = {}
     print("f_name: " + f_name)
     print("data" + str(data))
 
@@ -60,16 +59,10 @@ def simulate_neurons(f_name, data=None):
     t = np.multiply(TO_MS, np.arange(0, functions[f_name]["t"], 1e-4))  # time in MS
 
     # adjacency matrix
-    len_neurons = len(functions[f_name]["neuron_names"])
+    neurons = initialize_neurons(functions[f_name]["neuron_names"], t, data)
+    synapses = functions[f_name]["synapses"]
 
-    synapse_matrix = np.empty((len_neurons, len_neurons), dtype=object)
-    neuron_names = functions[f_name]["neuron_names"]
-    neurons = init_neu(neuron_names, t, data)
-
-    adj_matrix = AdjMatrix(neurons, neuron_names, synapse_matrix)
-
-    # synapse matrix
-    adj_matrix.fill_in(functions[f_name]["synapses"], adj_matrix.neuron_names)
+    adj_matrix = AdjMatrix(neurons, synapses)
     adj_matrix.simulate()
 
     return functions[f_name]["output_idx"], adj_matrix.neurons

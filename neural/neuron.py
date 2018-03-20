@@ -5,8 +5,8 @@ from neural.constants import *
 
 class Neuron(object):
 
-    def __init__(self, ID, t):
-        self.ID = ID
+    def __init__(self, name, t):
+        self.name = name
         self.t = t
         self.v = np.zeros(np.shape(t))
 
