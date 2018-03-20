@@ -1,4 +1,4 @@
-# benosman-models
+# neuralkernel
 [![Build Status](https://travis-ci.com/nstebbins/benosman-models.svg?token=wq8kpkt8TaRN17x6BNtj&branch=master)](https://travis-ci.com/nstebbins/benosman-models)
 [![PyPI](https://img.shields.io/pypi/v/neuralkernel.svg)](https://pypi.python.org/pypi/neuralkernel)
 
