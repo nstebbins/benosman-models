@@ -14,8 +14,9 @@ def main():
     #     "full_subtractor;inputone 2000 inputone 2900 inputtwo 2000 inputtwo 2400",
     #     "linear_combination;input0+ 1000 input0+ 2000 input1- 1600 input1- 2200"
     # ]
-    outputs, neurons = spikekernel.simulate_neurons("integrator", {'start': [100], 'input-': [3000, 4000, 5200, 5300],
-                                                                   'init': [100, 600]})
+    # outputs, neurons = spikekernel.simulate_neurons("integrator", {'start': [100], 'input-': [3000, 4000, 5200, 5300],
+    #                                                                'init': [100, 600]})
+    outputs, neurons = spikekernel.simulate_neurons("logarithm", {'input': [2000, 2700]})
     spikekernel.plot_v(np.take(neurons, outputs))
 
 

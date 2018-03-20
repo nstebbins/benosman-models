@@ -5,23 +5,13 @@ class AdjMatrix(object):
     def __init__(self):
         """default constructor"""
 
-    def fill_in(self, synapses, neuron_names, curr_o, child_o):
+    def fill_in(self, synapses, neuron_names):
         """fill in matrix with synapses"""
 
         for syn_list in synapses:
 
-            if syn_list.synapse_type is 1:  # net -> net
-                off1 = curr_o
-                off2 = curr_o
-            elif syn_list.synapse_type is 2:  # net -> parent
-                off1 = curr_o
-                off2 = child_o
-            else:  # parent -> net
-                off1 = child_o
-                off2 = curr_o
-
-            i = off1 + neuron_names[off1:].index(syn_list.n_from)
-            j = off2 + neuron_names[off2:].index(syn_list.n_to)
+            i = neuron_names.index(syn_list.n_from)
+            j = neuron_names.index(syn_list.n_to)
 
             self.synapse_matrix[i][j] = syn_list
 
