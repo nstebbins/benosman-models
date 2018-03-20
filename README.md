@@ -1,4 +1,7 @@
-## benosman-models
+# benosman-models
+[![Build Status](https://travis-ci.com/nstebbins/benosman-models.svg?token=wq8kpkt8TaRN17x6BNtj&branch=master)](https://travis-ci.com/nstebbins/benosman-models)
+[![PyPI](https://img.shields.io/pypi/v/neuralkernel.svg)](https://pypi.python.org/pypi/neuralkernel)
+
 
 This project uses modeling of neural networks as a general-purpose computational framework. Specifically, this project is interested in replicating operations on continuous-time signals. It builds off of the ideas and networks outlined by Xavier Lagorce and Ryad Benosman.
 
