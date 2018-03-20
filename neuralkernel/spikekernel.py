@@ -39,7 +39,7 @@ def plot_output_neurons(output_neurons: list, outputs: list) -> None:
 
 
 def simulate_neurons(data: dict) -> (list, list):
-    """implementation of a neural model"""
+    """implementation of a neuralkernel model"""
 
     neural_function = neural_functions[data['function']]
     t = np.multiply(TO_MS, np.arange(0, neural_function["t"], 1e-4))  # time in MS

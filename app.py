@@ -1,4 +1,4 @@
-import neural.spikekernel as spikekernel
+import neuralkernel.spikekernel as spikekernel
 
 
 def main():
