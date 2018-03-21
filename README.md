@@ -1,13 +1,10 @@
 # neuralkernel
 [![Build Status](https://travis-ci.com/nstebbins/benosman-models.svg?token=wq8kpkt8TaRN17x6BNtj&branch=master)](https://travis-ci.com/nstebbins/benosman-models)
 [![PyPI](https://img.shields.io/pypi/v/neuralkernel.svg)](https://pypi.python.org/pypi/neuralkernel)
-
+[![PyPI - License](https://img.shields.io/pypi/l/neuralkernel.svg)](https://pypi.python.org/pypi/neuralkernel)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/neuralkernel.svg)](https://pypi.python.org/pypi/neuralkernel)
 
 This project uses modeling of neural networks as a general-purpose computational framework. Specifically, this project is interested in replicating operations on continuous-time signals. It builds off of the ideas and networks outlined by Xavier Lagorce and Ryad Benosman.
-
-### Requirements
-
-* Python 3
 
 ### Usage
 
