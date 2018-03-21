@@ -17,6 +17,17 @@ class TestAdjMatrix(unittest.TestCase):
         neurons = [neuron.Neuron(neuron_name, t) for neuron_name in ['one', 'two']]
         self.adj_matrix = adjmatrix.AdjMatrix(neurons, synapses)
 
+    def test_simulate(self):
+        # actual
+        self.adj_matrix.neurons[0].v[0] = constants.V_THRESHOLD
+        self.adj_matrix.simulate()
+        # expected
+        expected_v1 = np.asarray([constants.V_THRESHOLD, 0, 0])
+        expected_v2 = np.asarray([0, constants.V_THRESHOLD, 0])
+        # test
+        np.testing.assert_almost_equal(self.adj_matrix.neurons[0].v, expected_v1)
+        np.testing.assert_almost_equal(self.adj_matrix.neurons[1].v, expected_v2)
+
     def test_synapse_prop(self):
         # actual
         n_from = 0

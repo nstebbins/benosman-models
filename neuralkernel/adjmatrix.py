@@ -19,7 +19,7 @@ class AdjMatrix(object):
         """update voltages for neurons"""
 
         t = self.neurons[0].t  # retrieve time window
-        for tj in range(1, t.size):
+        for tj in range(0, t.size):
             for ni in range(len(self.neurons)):
                 self.neurons[ni].next_v(tj)
                 if self.neurons[ni].v[tj] >= V_THRESHOLD:
