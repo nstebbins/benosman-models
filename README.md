@@ -8,7 +8,7 @@ This project uses networks of neuron-like computational units to build a framewo
 
 ## Getting Started
 
-To test various networks, you just need to run the following.
+To run a sample network, you can run the module.
 
 ```bash
 python -m neuralkernel
@@ -22,4 +22,12 @@ The networks currently implemented are:
 * Non-Inverting Memory
 * Full Subtractor
 
-For more information on each of these networks, please check out the `docs` folder. 
+For more information on each of these networks, please check out the `docs` folder.
+
+## Running the tests
+
+To run the unit tests, you can run the following.
+
+```bash
+python -m unittest discover tests
+```
