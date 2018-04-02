@@ -1,5 +1,5 @@
 # Neuralkernel
-[![Build Status](https://travis-ci.com/nstebbins/benosman-models.svg?token=wq8kpkt8TaRN17x6BNtj&branch=master)](https://travis-ci.com/nstebbins/benosman-models)
+[![Build Status](https://travis-ci.org/nstebbins/neuralkernel.svg?branch=master)](https://travis-ci.org/nstebbins/neuralkernel)
 [![PyPI](https://img.shields.io/pypi/v/neuralkernel.svg)](https://pypi.python.org/pypi/neuralkernel)
 [![PyPI - License](https://img.shields.io/pypi/l/neuralkernel.svg)](https://pypi.python.org/pypi/neuralkernel)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/neuralkernel.svg)](https://pypi.python.org/pypi/neuralkernel)
