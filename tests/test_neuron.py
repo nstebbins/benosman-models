@@ -1,7 +1,9 @@
 import unittest
+
 import numpy as np
-import neuralkernel.neuron as neuron
+
 import neuralkernel.constants as constants
+import neuralkernel.neuron as neuron
 
 
 class TestNeuron(unittest.TestCase):

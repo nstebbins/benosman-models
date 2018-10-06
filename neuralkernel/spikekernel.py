@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from .adjmatrix import AdjMatrix
+from .constants import TO_MS
 from .neuron import Neuron
 from .predefined_models import neural_functions
-from .constants import TO_MS
 
 
 # TODO: remove warning when running this

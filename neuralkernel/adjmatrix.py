@@ -1,7 +1,7 @@
 import numpy as np
 
-from .synapse import Synapse
 from .constants import T_TO_POS, T_NEU, V_THRESHOLD
+from .synapse import Synapse
 
 
 class AdjMatrix(object):

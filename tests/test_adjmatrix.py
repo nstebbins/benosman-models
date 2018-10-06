@@ -1,9 +1,11 @@
 import unittest
+
 import numpy as np
+
 import neuralkernel.adjmatrix as adjmatrix
-import neuralkernel.synapse as synapse
 import neuralkernel.constants as constants
 import neuralkernel.neuron as neuron
+import neuralkernel.synapse as synapse
 
 
 class TestAdjMatrix(unittest.TestCase):
