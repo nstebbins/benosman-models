@@ -14,7 +14,7 @@ class TestNeuron(unittest.TestCase):
     def test_populate_spikes_from_data(self):
         # actual
         spike_indices = [1]
-        self.neuron.populate_spikes_from_data(spike_indices)
+        self.neuron.update_v(spike_indices)
         # expected
         expected_v = np.asarray([0, constants.V_THRESHOLD, 0])
         # test
@@ -22,9 +22,9 @@ class TestNeuron(unittest.TestCase):
 
     def test_next_v(self):
         # actual
-        self.neuron.g_e[0] = 100
+        self.neuron.ge[0] = 100
         self.neuron.v[0] = 0.05
-        self.neuron.next_v(1)
+        self.neuron.simulate(1)
         # expected
         expected_v = np.asarray([0.05, 0.051, 0])
         # test

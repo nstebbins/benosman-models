@@ -20,7 +20,8 @@ def plot_output_neurons(output_neurons: list, outputs: list) -> None:
     big_ax.spines['bottom'].set_color('none')
     big_ax.spines['left'].set_color('none')
     big_ax.spines['right'].set_color('none')
-    big_ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
+    big_ax.tick_params(labelcolor='w', top='off', bottom='off', left='off',
+                       right='off')
 
     big_ax.set_xlabel('time (ms)')
     big_ax.set_ylabel('voltage (mV)')
@@ -42,12 +43,15 @@ def simulate_neurons(data: dict) -> (list, list):
     """implementation of a neuralkernel model"""
 
     neural_function = neural_functions[data['function']]
-    t = np.multiply(TO_MS, np.arange(0, neural_function["t"], 1e-4))  # time in MS
+    t = np.multiply(TO_MS,
+                    np.arange(0, neural_function["t"], 1e-4))  # time in MS
 
     # neurons and synapses
-    neurons = [Neuron(neuron_name, t) for neuron_name in neural_function["neuron_names"]]
+    neurons = [Neuron(neuron_name, t) for neuron_name in
+               neural_function["neuron_names"]]
     for neuron_name, spike_indices in data['initial_values'].items():
-        neurons[neural_function["neuron_names"].index(neuron_name)].populate_spikes_from_data(spike_indices)
+        neurons[neural_function["neuron_names"].index(neuron_name)].update_v(
+            spike_indices)
     synapses = neural_function["synapses"]
 
     adj_matrix = AdjMatrix(neurons, synapses)

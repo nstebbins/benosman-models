@@ -18,11 +18,11 @@ neural_functions = {
                 Synapse("V", 0.5 * W_E, T_SYN)
             ])),
             SynapseList("first", "acc", np.asarray([
-                Synapse("g_e", W_BAR_ACC, T_SYN + T_MIN)
+                Synapse("ge", W_BAR_ACC, T_SYN + T_MIN)
             ])),
             SynapseList("last", "acc", np.asarray([
-                Synapse("g_e", -W_BAR_ACC, T_SYN),
-                Synapse("g_f", G_MULT, T_SYN),
+                Synapse("ge", -W_BAR_ACC, T_SYN),
+                Synapse("gf", G_MULT, T_SYN),
                 Synapse("gate", 1, T_SYN)
             ])),
             SynapseList("last", "output", np.asarray([
@@ -74,16 +74,16 @@ neural_functions = {
                 Synapse("V", 0.5 * W_E, T_SYN)
             ])),
             SynapseList("first", "acc", np.asarray([
-                Synapse("g_e", W_ACC, T_SYN + T_MIN)
+                Synapse("ge", W_ACC, T_SYN + T_MIN)
             ])),
             SynapseList("last", "acc", np.asarray([
-                Synapse("g_e", -W_ACC, T_SYN),
+                Synapse("ge", -W_ACC, T_SYN),
             ])),
             SynapseList("acc", "output", np.asarray([
                 Synapse("V", W_E, T_SYN)
             ])),
             SynapseList("recall", "acc", np.asarray([
-                Synapse("g_e", W_ACC, T_SYN)
+                Synapse("ge", W_ACC, T_SYN)
             ])),
             SynapseList("recall", "output", np.asarray([
                 Synapse("V", W_E, 2 * T_SYN)
@@ -106,19 +106,19 @@ neural_functions = {
                 Synapse("V", 0.5 * W_E, T_SYN)
             ])),
             SynapseList("first", "acc", np.asarray([
-                Synapse("g_e", W_ACC, T_SYN)
+                Synapse("ge", W_ACC, T_SYN)
             ])),
             SynapseList("acc", "acctwo", np.asarray([
-                Synapse("g_e", -W_ACC, T_SYN)
+                Synapse("ge", -W_ACC, T_SYN)
             ])),
             SynapseList("last", "acctwo", np.asarray([
-                Synapse("g_e", W_ACC, T_SYN)
+                Synapse("ge", W_ACC, T_SYN)
             ])),
             SynapseList("acc", "ready", np.asarray([
                 Synapse("V", W_E, T_SYN)
             ])),
             SynapseList("recall", "acctwo", np.asarray([
-                Synapse("g_e", W_ACC, T_SYN)
+                Synapse("ge", W_ACC, T_SYN)
             ])),
             SynapseList("recall", "output", np.asarray([
                 Synapse("V", W_E, T_SYN)
@@ -132,7 +132,8 @@ neural_functions = {
     "full_subtractor": {
         "t": 1,
         "neuron_names": ["inputone", "inputtwo", "syncone",
-                         "synctwo", "inbone", "inbtwo", "output+", "output-", "zero"],
+                         "synctwo", "inbone", "inbtwo", "output+", "output-",
+                         "zero"],
         "output_idx": [6, 7],
         "synapses": np.asarray([
             SynapseList("inputone", "syncone", np.asarray([
