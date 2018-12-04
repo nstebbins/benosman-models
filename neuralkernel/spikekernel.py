@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+import networks
 from .adjmatrix import AdjMatrix
 from .constants import TO_MS
-from .networks import neural_functions
 from .neuron import Neuron
 
 
@@ -39,23 +39,23 @@ def plot_output_neurons(output_neurons: list, outputs: list) -> None:
     plt.show()
 
 
-def simulate_neurons(data: dict) -> (list, list):
-    """implementation of a neuralkernel model"""
+def simulate_neurons(network_name, offsets):
+    # highest level function, TODO: docstring
 
-    neural_function = neural_functions[data['function']]
+    network = networks.logarithm  # TODO: make dynamic with network_name
+
+    # TODO: change this
     t = np.multiply(TO_MS,
-                    np.arange(0, neural_function["t"], 1e-4))  # time in MS
+                    np.arange(0, network.window, 1e-4))  # time in MS
 
-    # neurons and synapses
-    neurons = [Neuron(neuron_name, t) for neuron_name in
-               neural_function["neuron_names"]]
-    for neuron_name, spike_indices in data['initial_values'].items():
-        neurons[neural_function["neuron_names"].index(
-            neuron_name)].set_spikes(
-            spike_indices)
-    synapses = neural_function["synapses"]
+    neurons = [Neuron(neuron_name, t) for neuron_name in network.neuron_names]
 
-    adj_matrix = AdjMatrix(neurons, synapses)
+    # TODO: improve and put somewhere else
+    for neuron_name in offsets:
+        neurons[network.neuron_names.index(neuron_name)].set_spikes(
+            offsets[neuron_name])
+
+    adj_matrix = AdjMatrix(neurons, network.synapses)
     adj_matrix.simulate()
 
-    return neural_function["output_idx"], adj_matrix.neurons
+    return network.output_idx, adj_matrix.neurons
