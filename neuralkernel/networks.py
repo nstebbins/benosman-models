@@ -1,7 +1,5 @@
 from collections import namedtuple
 
-import numpy as np
-
 from .constants import W_E, W_ACC, W_BAR_ACC, W_I, G_MULT, T_SYN, T_MIN, T_NEU
 from .synapse import Synapse, SynapseList
 
@@ -10,185 +8,183 @@ Network = namedtuple("Network",
                      ("window", "output_idx", "neuron_names", "synapses"))
 
 logarithm = Network(0.5, [4], ["input", "first", "last", "acc", "output"],
-                    np.asarray([
-                        SynapseList("input", "first", np.asarray([
+                    [
+                        SynapseList("input", "first", [
                             Synapse("V", W_E, T_SYN)
-                        ])),
-                        SynapseList("first", "first", np.asarray([
+                        ]),
+                        SynapseList("first", "first", [
                             Synapse("V", W_I, T_SYN)
-                        ])),
-                        SynapseList("input", "last", np.asarray([
+                        ]),
+                        SynapseList("input", "last", [
                             Synapse("V", 0.5 * W_E, T_SYN)
-                        ])),
-                        SynapseList("first", "acc", np.asarray([
+                        ]),
+                        SynapseList("first", "acc", [
                             Synapse("ge", W_BAR_ACC, T_SYN + T_MIN)
-                        ])),
-                        SynapseList("last", "acc", np.asarray([
+                        ]),
+                        SynapseList("last", "acc", [
                             Synapse("ge", -W_BAR_ACC, T_SYN),
                             Synapse("gf", G_MULT, T_SYN),
                             Synapse("gate", 1, T_SYN)
-                        ])),
-                        SynapseList("last", "output", np.asarray([
+                        ]),
+                        SynapseList("last", "output", [
                             Synapse("V", W_E, 2 * T_SYN)
-                        ])),
-                        SynapseList("acc", "output", np.asarray([
+                        ]),
+                        SynapseList("acc", "output", [
                             Synapse("V", W_E, T_SYN + T_MIN)
-                        ]))
-                    ]))
+                        ])
+                    ])
 
 maximum = Network(1, [4],
                   ["input", "inputtwo", "larger", "largertwo", "output"],
-                  np.asarray([
-                      SynapseList("input", "largertwo", np.asarray([
+                  [
+                      SynapseList("input", "largertwo", [
                           Synapse("V", 0.5 * W_E, T_SYN)
-                      ])),
-                      SynapseList("input", "output", np.asarray([
+                      ]),
+                      SynapseList("input", "output", [
                           Synapse("V", 0.5 * W_E, T_SYN)
-                      ])),
-                      SynapseList("inputtwo", "output", np.asarray([
+                      ]),
+                      SynapseList("inputtwo", "output", [
                           Synapse("V", 0.5 * W_E, T_SYN)
-                      ])),
-                      SynapseList("inputtwo", "larger", np.asarray([
+                      ]),
+                      SynapseList("inputtwo", "larger", [
                           Synapse("V", 0.5 * W_E, T_SYN + T_MIN)
-                      ])),
-                      SynapseList("larger", "largertwo", np.asarray([
+                      ]),
+                      SynapseList("larger", "largertwo", [
                           Synapse("V", W_I, T_SYN),
-                      ])),
-                      SynapseList("largertwo", "larger", np.asarray([
+                      ]),
+                      SynapseList("largertwo", "larger", [
                           Synapse("V", W_I, T_SYN)
-                      ]))
-                  ]))
+                      ])
+                  ])
 
 inverting_mem = Network(0.8, [5],
                         ["input", "first", "last", "acc", "recall", "output"],
-                        np.asarray([
-                            SynapseList("input", "first", np.asarray([
+                        [
+                            SynapseList("input", "first", [
                                 Synapse("V", W_E, T_SYN)
-                            ])),
-                            SynapseList("first", "first", np.asarray([
+                            ]),
+                            SynapseList("first", "first", [
                                 Synapse("V", W_I, T_SYN)
-                            ])),
-                            SynapseList("input", "last", np.asarray([
+                            ]),
+                            SynapseList("input", "last", [
                                 Synapse("V", 0.5 * W_E, T_SYN)
-                            ])),
-                            SynapseList("first", "acc", np.asarray([
+                            ]),
+                            SynapseList("first", "acc", [
                                 Synapse("ge", W_ACC, T_SYN + T_MIN)
-                            ])),
-                            SynapseList("last", "acc", np.asarray([
+                            ]),
+                            SynapseList("last", "acc", [
                                 Synapse("ge", -W_ACC, T_SYN),
-                            ])),
-                            SynapseList("acc", "output", np.asarray([
+                            ]),
+                            SynapseList("acc", "output", [
                                 Synapse("V", W_E, T_SYN)
-                            ])),
-                            SynapseList("recall", "acc", np.asarray([
+                            ]),
+                            SynapseList("recall", "acc", [
                                 Synapse("ge", W_ACC, T_SYN)
-                            ])),
-                            SynapseList("recall", "output", np.asarray([
+                            ]),
+                            SynapseList("recall", "output", [
                                 Synapse("V", W_E, 2 * T_SYN)
-                            ]))
-                        ]))
+                            ])
+                        ])
 
 non_inverting_mem = Network(0.8, [7],
                             ["input", "first", "last", "acc", "acctwo",
                              "recall", "ready", "output"],
-                            np.asarray([
-                                SynapseList("input", "first", np.asarray([
+                            [
+                                SynapseList("input", "first", [
                                     Synapse("V", W_E, T_SYN)
-                                ])),
-                                SynapseList("first", "first", np.asarray([
+                                ]),
+                                SynapseList("first", "first", [
                                     Synapse("V", W_I, T_SYN)
-                                ])),
-                                SynapseList("input", "last", np.asarray([
+                                ]),
+                                SynapseList("input", "last", [
                                     Synapse("V", 0.5 * W_E, T_SYN)
-                                ])),
-                                SynapseList("first", "acc", np.asarray([
+                                ]),
+                                SynapseList("first", "acc", [
                                     Synapse("ge", W_ACC, T_SYN)
-                                ])),
-                                SynapseList("acc", "acctwo", np.asarray([
+                                ]),
+                                SynapseList("acc", "acctwo", [
                                     Synapse("ge", -W_ACC, T_SYN)
-                                ])),
-                                SynapseList("last", "acctwo", np.asarray([
+                                ]),
+                                SynapseList("last", "acctwo", [
                                     Synapse("ge", W_ACC, T_SYN)
-                                ])),
-                                SynapseList("acc", "ready", np.asarray([
+                                ]),
+                                SynapseList("acc", "ready", [
                                     Synapse("V", W_E, T_SYN)
-                                ])),
-                                SynapseList("recall", "acctwo", np.asarray([
+                                ]),
+                                SynapseList("recall", "acctwo", [
                                     Synapse("ge", W_ACC, T_SYN)
-                                ])),
-                                SynapseList("recall", "output", np.asarray([
+                                ]),
+                                SynapseList("recall", "output", [
                                     Synapse("V", W_E, T_SYN)
-                                ])),
-                                SynapseList("acctwo", "output", np.asarray([
+                                ]),
+                                SynapseList("acctwo", "output", [
                                     Synapse("V", W_E, T_SYN)
-                                ]))
-                            ]))
+                                ])
+                            ])
 
 full_subtractor = Network(1, [6, 7], ["inputone", "inputtwo", "syncone",
                                       "synctwo", "inbone", "inbtwo", "output+",
-                                      "output-",
-                                      "zero"],
-                          np.asarray([
-                              SynapseList("inputone", "syncone", np.asarray([
+                                      "output-", "zero"],
+                          [
+                              SynapseList("inputone", "syncone", [
                                   Synapse("V", 0.5 * W_E, T_SYN)
-                              ])),
-                              SynapseList("inputtwo", "synctwo", np.asarray([
+                              ]),
+                              SynapseList("inputtwo", "synctwo", [
                                   Synapse("V", 0.5 * W_E, T_SYN)
-                              ])),
-                              SynapseList("syncone", "output+", np.asarray([
+                              ]),
+                              SynapseList("syncone", "output+", [
                                   Synapse("V", W_E,
                                           T_MIN + 3 * T_SYN + 2 * T_NEU)
-                              ])),
-                              SynapseList("syncone", "inbone", np.asarray([
+                              ]),
+                              SynapseList("syncone", "inbone", [
                                   Synapse("V", W_E, T_SYN)
-                              ])),
-                              SynapseList("syncone", "output-", np.asarray([
+                              ]),
+                              SynapseList("syncone", "output-", [
                                   Synapse("V", W_E, 3 * T_SYN + 2 * T_NEU)
-                              ])),
-                              SynapseList("syncone", "inbtwo", np.asarray([
+                              ]),
+                              SynapseList("syncone", "inbtwo", [
                                   Synapse("V", W_I, T_SYN)
-                              ])),
-                              SynapseList("synctwo", "inbone", np.asarray([
+                              ]),
+                              SynapseList("synctwo", "inbone", [
                                   Synapse("V", W_I, T_SYN)
-                              ])),
-                              SynapseList("synctwo", "output+", np.asarray([
+                              ]),
+                              SynapseList("synctwo", "output+", [
                                   Synapse("V", W_E, 3 * T_SYN + 2 * T_NEU)
-                              ])),
-                              SynapseList("synctwo", "inbtwo", np.asarray([
+                              ]),
+                              SynapseList("synctwo", "inbtwo", [
                                   Synapse("V", W_E, T_SYN)
-                              ])),
-                              SynapseList("synctwo", "output-", np.asarray([
+                              ]),
+                              SynapseList("synctwo", "output-", [
                                   Synapse("V", W_E,
                                           T_MIN + 3 * T_SYN + 2 * T_NEU)
-                              ])),
-                              SynapseList("inbone", "output+", np.asarray([
+                              ]),
+                              SynapseList("inbone", "output+", [
                                   Synapse("V", 2 * W_I, T_SYN)
-                              ])),
-                              SynapseList("inbtwo", "output-", np.asarray([
+                              ]),
+                              SynapseList("inbtwo", "output-", [
                                   Synapse("V", 2 * W_I, T_SYN)
-                              ])),
-                              SynapseList("output+", "inbtwo", np.asarray([
+                              ]),
+                              SynapseList("output+", "inbtwo", [
                                   Synapse("V", 0.5 * W_E, T_SYN)
-                              ])),
-                              SynapseList("output-", "inbone", np.asarray([
+                              ]),
+                              SynapseList("output-", "inbone", [
                                   Synapse("V", 0.5 * W_E, T_SYN)
-                              ])),
-                              SynapseList("zero", "zero", np.asarray([
+                              ]),
+                              SynapseList("zero", "zero", [
                                   Synapse("V", W_E, T_NEU)
-                              ])),
-                              SynapseList("synctwo", "zero", np.asarray([
+                              ]),
+                              SynapseList("synctwo", "zero", [
                                   Synapse("V", 0.5 * W_E, T_NEU),
                                   Synapse("V", 0.5 * W_I, 2 * T_NEU)
-                              ])),
-                              SynapseList("syncone", "zero", np.asarray([
+                              ]),
+                              SynapseList("syncone", "zero", [
                                   Synapse("V", 0.5 * W_E, T_NEU),
                                   Synapse("V", 0.5 * W_I, 2 * T_NEU)
-                              ])),
-                              SynapseList("zero", "inbtwo", np.asarray([
+                              ]),
+                              SynapseList("zero", "inbtwo", [
                                   Synapse("V", W_I, T_NEU),
-                              ])),
-                              SynapseList("zero", "output-", np.asarray([
+                              ]),
+                              SynapseList("zero", "output-", [
                                   Synapse("V", 2 * W_I, T_NEU),
-                              ]))
+                              ])
                           ])
-                          )

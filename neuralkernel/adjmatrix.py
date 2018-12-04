@@ -3,10 +3,11 @@ import numpy as np
 from .constants import T_TO_POS, T_NEU, V_THRESHOLD
 
 
-class AdjMatrix(object):
+class AdjMatrix:
 
-    def __init__(self, neurons: list, synapses: np.ndarray) -> None:
+    def __init__(self, neurons, synapses):
         self.neurons = neurons
+        # TODO: clean-up code below
         self.synapse_matrix = np.empty((len(self.neurons), len(self.neurons)),
                                        dtype=object)
         neuron_names = [neuron.name for neuron in self.neurons]
