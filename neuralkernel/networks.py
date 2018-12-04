@@ -7,7 +7,8 @@ from .synapse import Synapse, SynapseList
 Network = namedtuple("Network",
                      ("window", "output_idx", "neuron_names", "synapses"))
 
-logarithm = Network(0.5, [4], ["input", "first", "last", "acc", "output"],
+logarithm = Network(0.5, {"output"},
+                    ["input", "first", "last", "acc", "output"],
                     [
                         SynapseList("input", "first", [
                             Synapse("v", W_E, T_SYN)
@@ -34,7 +35,7 @@ logarithm = Network(0.5, [4], ["input", "first", "last", "acc", "output"],
                         ])
                     ])
 
-maximum = Network(1, [4],
+maximum = Network(1, {"output"},
                   ["input", "inputtwo", "larger", "largertwo", "output"],
                   [
                       SynapseList("input", "largertwo", [
@@ -57,7 +58,7 @@ maximum = Network(1, [4],
                       ])
                   ])
 
-inverting_mem = Network(0.8, [5],
+inverting_mem = Network(0.8, {"output"},
                         ["input", "first", "last", "acc", "recall", "output"],
                         [
                             SynapseList("input", "first", [
@@ -86,7 +87,7 @@ inverting_mem = Network(0.8, [5],
                             ])
                         ])
 
-non_inverting_mem = Network(0.8, [7],
+non_inverting_mem = Network(0.8, {"output"},
                             ["input", "first", "last", "acc", "acctwo",
                              "recall", "ready", "output"],
                             [
@@ -122,9 +123,10 @@ non_inverting_mem = Network(0.8, [7],
                                 ])
                             ])
 
-full_subtractor = Network(1, [6, 7], ["inputone", "inputtwo", "syncone",
-                                      "synctwo", "inbone", "inbtwo", "output+",
-                                      "output-", "zero"],
+full_subtractor = Network(1, {"output+", "output-"},
+                          ["inputone", "inputtwo", "syncone",
+                           "synctwo", "inbone", "inbtwo", "output+",
+                           "output-", "zero"],
                           [
                               SynapseList("inputone", "syncone", [
                                   Synapse("v", 0.5 * W_E, T_SYN)

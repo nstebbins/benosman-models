@@ -1,4 +1,5 @@
-from .spikekernel import simulate_neurons, plot_output_neurons
+from .graph import plot_neurons
+from .spikekernel import simulate_neurons
 
 
 def main() -> None:
@@ -10,8 +11,9 @@ def main() -> None:
     # 'input': [2000, 2200], 'recall': [5000]}}
     # data = {'function': 'full_subtractor', 'initial_values': {'inputone':
     # [2000, 2900], 'inputtwo': [2000, 2400]}}
-    outputs, neurons = simulate_neurons("logarithm", {'input': [2000, 2700]})
-    plot_output_neurons(neurons, outputs)
+    output_neurons = simulate_neurons("logarithm",
+                                      {'input': [2000, 2700]})
+    plot_neurons(output_neurons)
 
 
 if __name__ == '__main__':

@@ -58,4 +58,11 @@ def simulate_neurons(network_name, offsets):
     adj_matrix = AdjMatrix(neurons, network.synapses)
     adj_matrix.simulate(t)
 
-    return network.output_idx, adj_matrix.neurons
+    # TODO:
+    output_neurons = {}
+    for neuron in adj_matrix.neurons:
+        if neuron in network.output_idx:
+            # copy the reference
+            output_neurons[neuron] = adj_matrix.neurons[neuron]
+
+    return output_neurons
