@@ -1,29 +1,12 @@
-from collections import namedtuple
-
 from .constants import T_TO_POS, T_NEU
-
-SynapseMatrixKey = namedtuple("SynapseMatrixKey", ("src", "dest"))
-
-
-class SynapseMatrix:
-
-    def __init__(self, synapses):
-        # load in synapses by src and dest
-        self._matrix = {SynapseMatrixKey(synapse_list.src, synapse_list.dest):
-                            synapse_list.synapses for synapse_list in synapses}
-
-    @property
-    def matrix(self):
-        return self._matrix
-
-    # TODO: eventually override __getitem__ if you want
+from .synapse import SynapseMatrixKey
 
 
 class AdjMatrix:
 
     def __init__(self, neurons, synapses):
         self.neurons = neurons
-        self.synapse_matrix = SynapseMatrix(synapses)
+        self.synapses = synapses
 
     def simulate(self, window):
         """simulate neurons in the adjacency matrix"""
@@ -39,8 +22,8 @@ class AdjMatrix:
     def propagate_synapse(self, src, dest, window_idx):
         # TODO: docstring
         synapse_key = SynapseMatrixKey(src.name, dest.name)
-        if synapse_key in self.synapse_matrix.matrix:
-            for synapse in self.synapse_matrix.matrix[synapse_key]:
+        if synapse_key in self.synapses:
+            for synapse in self.synapses[synapse_key]:
                 print(synapse)
                 # propagate
                 idx = window_idx + int(T_TO_POS * (synapse.delay + T_NEU))

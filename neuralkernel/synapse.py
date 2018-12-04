@@ -1,4 +1,5 @@
 from collections import namedtuple
 
 Synapse = namedtuple("Synapse", ("type", "weight", "delay"))
-SynapseList = namedtuple("SynapseList", ("src", "dest", "synapses"))
+SynapseGroup = namedtuple("SynapseGroup", ("src", "dest", "synapses"))
+SynapseMatrixKey = namedtuple("SynapseMatrixKey", ("src", "dest"))
