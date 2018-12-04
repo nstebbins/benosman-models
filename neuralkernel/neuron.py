@@ -25,7 +25,7 @@ class Neuron:
 
     def update(self, field, idx, offset):
         # TODO: docstring
-        if field in {"V", "ge", "gf"}:
+        if field in {"v", "ge", "gf"}:
             getattr(self, field)[idx] += offset
         # TODO: change 'gates' logic and handle unknown fields
         elif field == "gate":
