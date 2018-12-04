@@ -1,9 +1,10 @@
 from .constants import T_TO_POS, T_NEU
-from .synapse import SynapseMatrixKey
+from .synapse import SynapseGroupKey
 
 
 class AdjMatrix:
 
+    # TODO: we don't need state
     def __init__(self, neurons, synapses):
         self.neurons = neurons
         self.synapses = synapses
@@ -21,7 +22,7 @@ class AdjMatrix:
 
     def propagate_synapse(self, src, dest, window_idx):
         # TODO: docstring
-        synapse_key = SynapseMatrixKey(src.name, dest.name)
+        synapse_key = SynapseGroupKey(src.name, dest.name)
         if synapse_key in self.synapses:
             for synapse in self.synapses[synapse_key]:
                 print(synapse)

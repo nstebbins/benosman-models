@@ -1,194 +1,192 @@
 from collections import namedtuple
 
 from .constants import W_E, W_ACC, W_BAR_ACC, W_I, G_MULT, T_SYN, T_MIN, T_NEU
-from .synapse import Synapse, SynapseGroup, SynapseMatrixKey
+from .synapse import Synapse, SynapseGroupKey
 
-# TODO: change output_idx to output_neuron_name
 Network = namedtuple("Network",
-                     ("window", "output_idx", "neuron_names", "synapses"))
+                     ("window", "output_neuron_names", "neuron_names",
+                      "synapses"))
 
 logarithm = Network(0.5, {"output"},
                     ["input", "first", "last", "acc", "output"],
                     {
-                        SynapseMatrixKey("input", "first"): [
+                        SynapseGroupKey("input", "first"): [
                             Synapse("v", W_E, T_SYN)
                         ],
-                        SynapseMatrixKey("first", "first"): [
+                        SynapseGroupKey("first", "first"): [
                             Synapse("v", W_I, T_SYN)
                         ],
-                        SynapseMatrixKey("input", "last"): [
+                        SynapseGroupKey("input", "last"): [
                             Synapse("v", 0.5 * W_E, T_SYN)
                         ],
-                        SynapseMatrixKey("first", "acc"): [
+                        SynapseGroupKey("first", "acc"): [
                             Synapse("ge", W_BAR_ACC, T_SYN + T_MIN)
                         ],
-                        SynapseMatrixKey("last", "acc"): [
+                        SynapseGroupKey("last", "acc"): [
                             Synapse("ge", -W_BAR_ACC, T_SYN),
                             Synapse("gf", G_MULT, T_SYN),
                             Synapse("gate", 1, T_SYN)
                         ],
-                        SynapseMatrixKey("last", "output"): [
+                        SynapseGroupKey("last", "output"): [
                             Synapse("v", W_E, 2 * T_SYN)
                         ],
-                        SynapseMatrixKey("acc", "output"): [
+                        SynapseGroupKey("acc", "output"): [
                             Synapse("v", W_E, T_SYN + T_MIN)
                         ]
                     })
 
-# TODO: update the rest of these guys
-
 maximum = Network(1, {"output"},
                   ["input", "inputtwo", "larger", "largertwo", "output"],
-                  [
-                      SynapseGroup("input", "largertwo", [
+                  {
+                      SynapseGroupKey("input", "largertwo"): [
                           Synapse("v", 0.5 * W_E, T_SYN)
-                      ]),
-                      SynapseGroup("input", "output", [
+                      ],
+                      SynapseGroupKey("input", "output"): [
                           Synapse("v", 0.5 * W_E, T_SYN)
-                      ]),
-                      SynapseGroup("inputtwo", "output", [
+                      ],
+                      SynapseGroupKey("inputtwo", "output"): [
                           Synapse("v", 0.5 * W_E, T_SYN)
-                      ]),
-                      SynapseGroup("inputtwo", "larger", [
+                      ],
+                      SynapseGroupKey("inputtwo", "larger"): [
                           Synapse("v", 0.5 * W_E, T_SYN + T_MIN)
-                      ]),
-                      SynapseGroup("larger", "largertwo", [
+                      ],
+                      SynapseGroupKey("larger", "largertwo"): [
                           Synapse("v", W_I, T_SYN),
-                      ]),
-                      SynapseGroup("largertwo", "larger", [
+                      ],
+                      SynapseGroupKey("largertwo", "larger"): [
                           Synapse("v", W_I, T_SYN)
-                      ])
-                  ])
+                      ]
+                  })
 
 inverting_mem = Network(0.8, {"output"},
                         ["input", "first", "last", "acc", "recall", "output"],
-                        [
-                            SynapseGroup("input", "first", [
+                        {
+                            SynapseGroupKey("input", "first"): [
                                 Synapse("v", W_E, T_SYN)
-                            ]),
-                            SynapseGroup("first", "first", [
+                            ],
+                            SynapseGroupKey("first", "first"): [
                                 Synapse("v", W_I, T_SYN)
-                            ]),
-                            SynapseGroup("input", "last", [
+                            ],
+                            SynapseGroupKey("input", "last"): [
                                 Synapse("v", 0.5 * W_E, T_SYN)
-                            ]),
-                            SynapseGroup("first", "acc", [
+                            ],
+                            SynapseGroupKey("first", "acc"): [
                                 Synapse("ge", W_ACC, T_SYN + T_MIN)
-                            ]),
-                            SynapseGroup("last", "acc", [
+                            ],
+                            SynapseGroupKey("last", "acc"): [
                                 Synapse("ge", -W_ACC, T_SYN),
-                            ]),
-                            SynapseGroup("acc", "output", [
+                            ],
+                            SynapseGroupKey("acc", "output"): [
                                 Synapse("v", W_E, T_SYN)
-                            ]),
-                            SynapseGroup("recall", "acc", [
+                            ],
+                            SynapseGroupKey("recall", "acc"): [
                                 Synapse("ge", W_ACC, T_SYN)
-                            ]),
-                            SynapseGroup("recall", "output", [
+                            ],
+                            SynapseGroupKey("recall", "output"): [
                                 Synapse("v", W_E, 2 * T_SYN)
-                            ])
-                        ])
+                            ]
+                        })
 
 non_inverting_mem = Network(0.8, {"output"},
                             ["input", "first", "last", "acc", "acctwo",
                              "recall", "ready", "output"],
-                            [
-                                SynapseGroup("input", "first", [
+                            {
+                                SynapseGroupKey("input", "first"): [
                                     Synapse("v", W_E, T_SYN)
-                                ]),
-                                SynapseGroup("first", "first", [
+                                ],
+                                SynapseGroupKey("first", "first"): [
                                     Synapse("v", W_I, T_SYN)
-                                ]),
-                                SynapseGroup("input", "last", [
+                                ],
+                                SynapseGroupKey("input", "last"): [
                                     Synapse("v", 0.5 * W_E, T_SYN)
-                                ]),
-                                SynapseGroup("first", "acc", [
+                                ],
+                                SynapseGroupKey("first", "acc"): [
                                     Synapse("ge", W_ACC, T_SYN)
-                                ]),
-                                SynapseGroup("acc", "acctwo", [
+                                ],
+                                SynapseGroupKey("acc", "acctwo"): [
                                     Synapse("ge", -W_ACC, T_SYN)
-                                ]),
-                                SynapseGroup("last", "acctwo", [
+                                ],
+                                SynapseGroupKey("last", "acctwo"): [
                                     Synapse("ge", W_ACC, T_SYN)
-                                ]),
-                                SynapseGroup("acc", "ready", [
+                                ],
+                                SynapseGroupKey("acc", "ready"): [
                                     Synapse("v", W_E, T_SYN)
-                                ]),
-                                SynapseGroup("recall", "acctwo", [
+                                ],
+                                SynapseGroupKey("recall", "acctwo"): [
                                     Synapse("ge", W_ACC, T_SYN)
-                                ]),
-                                SynapseGroup("recall", "output", [
+                                ],
+                                SynapseGroupKey("recall", "output"): [
                                     Synapse("v", W_E, T_SYN)
-                                ]),
-                                SynapseGroup("acctwo", "output", [
+                                ],
+                                SynapseGroupKey("acctwo", "output"): [
                                     Synapse("v", W_E, T_SYN)
-                                ])
-                            ])
+                                ]
+                            })
 
 full_subtractor = Network(1, {"output+", "output-"},
                           ["inputone", "inputtwo", "syncone",
                            "synctwo", "inbone", "inbtwo", "output+",
                            "output-", "zero"],
-                          [
-                              SynapseGroup("inputone", "syncone", [
+                          {
+                              SynapseGroupKey("inputone", "syncone"): [
                                   Synapse("v", 0.5 * W_E, T_SYN)
-                              ]),
-                              SynapseGroup("inputtwo", "synctwo", [
+                              ],
+                              SynapseGroupKey("inputtwo", "synctwo"): [
                                   Synapse("v", 0.5 * W_E, T_SYN)
-                              ]),
-                              SynapseGroup("syncone", "output+", [
+                              ],
+                              SynapseGroupKey("syncone", "output+"): [
                                   Synapse("v", W_E,
                                           T_MIN + 3 * T_SYN + 2 * T_NEU)
-                              ]),
-                              SynapseGroup("syncone", "inbone", [
+                              ],
+                              SynapseGroupKey("syncone", "inbone"): [
                                   Synapse("v", W_E, T_SYN)
-                              ]),
-                              SynapseGroup("syncone", "output-", [
+                              ],
+                              SynapseGroupKey("syncone", "output-"): [
                                   Synapse("v", W_E, 3 * T_SYN + 2 * T_NEU)
-                              ]),
-                              SynapseGroup("syncone", "inbtwo", [
+                              ],
+                              SynapseGroupKey("syncone", "inbtwo"): [
                                   Synapse("v", W_I, T_SYN)
-                              ]),
-                              SynapseGroup("synctwo", "inbone", [
+                              ],
+                              SynapseGroupKey("synctwo", "inbone"): [
                                   Synapse("v", W_I, T_SYN)
-                              ]),
-                              SynapseGroup("synctwo", "output+", [
+                              ],
+                              SynapseGroupKey("synctwo", "output+"): [
                                   Synapse("v", W_E, 3 * T_SYN + 2 * T_NEU)
-                              ]),
-                              SynapseGroup("synctwo", "inbtwo", [
+                              ],
+                              SynapseGroupKey("synctwo", "inbtwo"): [
                                   Synapse("v", W_E, T_SYN)
-                              ]),
-                              SynapseGroup("synctwo", "output-", [
+                              ],
+                              SynapseGroupKey("synctwo", "output-"): [
                                   Synapse("v", W_E,
                                           T_MIN + 3 * T_SYN + 2 * T_NEU)
-                              ]),
-                              SynapseGroup("inbone", "output+", [
+                              ],
+                              SynapseGroupKey("inbone", "output+"): [
                                   Synapse("v", 2 * W_I, T_SYN)
-                              ]),
-                              SynapseGroup("inbtwo", "output-", [
+                              ],
+                              SynapseGroupKey("inbtwo", "output-"): [
                                   Synapse("v", 2 * W_I, T_SYN)
-                              ]),
-                              SynapseGroup("output+", "inbtwo", [
+                              ],
+                              SynapseGroupKey("output+", "inbtwo"): [
                                   Synapse("v", 0.5 * W_E, T_SYN)
-                              ]),
-                              SynapseGroup("output-", "inbone", [
+                              ],
+                              SynapseGroupKey("output-", "inbone"): [
                                   Synapse("v", 0.5 * W_E, T_SYN)
-                              ]),
-                              SynapseGroup("zero", "zero", [
+                              ],
+                              SynapseGroupKey("zero", "zero"): [
                                   Synapse("v", W_E, T_NEU)
-                              ]),
-                              SynapseGroup("synctwo", "zero", [
+                              ],
+                              SynapseGroupKey("synctwo", "zero"): [
                                   Synapse("v", 0.5 * W_E, T_NEU),
                                   Synapse("v", 0.5 * W_I, 2 * T_NEU)
-                              ]),
-                              SynapseGroup("syncone", "zero", [
+                              ],
+                              SynapseGroupKey("syncone", "zero"): [
                                   Synapse("v", 0.5 * W_E, T_NEU),
                                   Synapse("v", 0.5 * W_I, 2 * T_NEU)
-                              ]),
-                              SynapseGroup("zero", "inbtwo", [
+                              ],
+                              SynapseGroupKey("zero", "inbtwo"): [
                                   Synapse("v", W_I, T_NEU),
-                              ]),
-                              SynapseGroup("zero", "output-", [
+                              ],
+                              SynapseGroupKey("zero", "output-"): [
                                   Synapse("v", 2 * W_I, T_NEU),
-                              ])
-                          ])
+                              ]
+                          })
