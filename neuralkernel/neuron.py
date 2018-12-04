@@ -14,10 +14,22 @@ class Neuron:
         self.gate = np.zeros(t.shape)
 
     # TODO: modify contract (use time, not indices and set, not list)
-    def update_v(self, spike_idx_set):
+    def set_spikes(self, spike_idx_set):
         """update voltage with set of spike indices"""
         for spike_idx in spike_idx_set:
             self.v[spike_idx] = V_THRESHOLD
+
+    def is_spike(self, idx):
+        # TODO: docstring
+        return self.v[idx] >= V_THRESHOLD
+
+    def update(self, field, idx, offset):
+        # TODO: docstring
+        if field in {"V", "ge", "gf"}:
+            getattr(self, field)[idx] += offset
+        # TODO: change 'gates' logic and handle unknown fields
+        elif field == "gate":
+            getattr(self, field)[idx] = {1: 1, -1: 0}[offset]
 
     def simulate(self, idx):
         """simulate neuron at index"""

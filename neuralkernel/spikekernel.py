@@ -3,8 +3,8 @@ import numpy as np
 
 from .adjmatrix import AdjMatrix
 from .constants import TO_MS
+from .networks import neural_functions
 from .neuron import Neuron
-from .predefined_models import neural_functions
 
 
 # TODO: remove warning when running this
@@ -50,7 +50,8 @@ def simulate_neurons(data: dict) -> (list, list):
     neurons = [Neuron(neuron_name, t) for neuron_name in
                neural_function["neuron_names"]]
     for neuron_name, spike_indices in data['initial_values'].items():
-        neurons[neural_function["neuron_names"].index(neuron_name)].update_v(
+        neurons[neural_function["neuron_names"].index(
+            neuron_name)].set_spikes(
             spike_indices)
     synapses = neural_function["synapses"]
 

@@ -1,7 +1,6 @@
 import numpy as np
 
 from .constants import T_TO_POS, T_NEU, V_THRESHOLD
-from .synapse import Synapse
 
 
 class AdjMatrix(object):
@@ -16,8 +15,18 @@ class AdjMatrix(object):
             j = neuron_names.index(synapse_list.n_to)
             self.synapse_matrix[i][j] = synapse_list
 
-    def simulate(self) -> None:
-        """simulate voltages for neurons"""
+    def simulate_v2(self, window):
+        """simulate neurons in the adjacency matrix"""
+
+        for window_idx in range(window.size):
+            for neuron_idx, neuron in enumerate(self.neurons):
+                neuron.simulate(window_idx)
+                if neuron.is_spike(window_idx):
+                    # check adj matrix for synapses to send
+                    pass
+
+    def simulate(self):
+        """simulate neurons in the adjacency matrix"""
 
         t = self.neurons[0].t  # retrieve time window
         for tj in range(0, t.size):
@@ -26,19 +35,12 @@ class AdjMatrix(object):
                 if self.neurons[ni].v[tj] >= V_THRESHOLD:
                     # check adjacency matrix for synapses to send out
                     for n_to in range(0, len(self.neurons)):
-                        if self.synapse_matrix[ni][n_to] is not None:
+                        if self.synapse_matrix[ni][n_to]:
                             for syn in self.synapse_matrix[ni][n_to].synapses:
+                                print(syn)
                                 self.synapse_prop(syn, n_to, tj)
 
-    def synapse_prop(self, syn: Synapse, n_to: int, tj: float) -> None:
+    def synapse_prop(self, syn, n_to, tj):
         """propagate the synapse through the adjacency matrix"""
-
-        t_delay = tj + int(T_TO_POS * (syn.s_delay + T_NEU))
-        if syn.s_type is "V":
-            self.neurons[n_to].v[t_delay] += syn.s_weight
-        elif syn.s_type is "ge":
-            self.neurons[n_to].ge[t_delay] += syn.s_weight
-        elif syn.s_type is "gf":
-            self.neurons[n_to].gf[t_delay] += syn.s_weight
-        elif syn.s_type is "gate":  # gate synapse
-            self.neurons[n_to].gate[t_delay] = {1: 1, -1: 0}[syn.s_weight]
+        t_delay = tj + int(T_TO_POS * (syn.delay + T_NEU))
+        self.neurons[n_to].update(syn.type, t_delay, syn.weight)

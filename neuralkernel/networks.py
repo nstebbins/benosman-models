@@ -1,7 +1,13 @@
+from collections import namedtuple
+
 import numpy as np
 
 from .constants import W_E, W_ACC, W_BAR_ACC, W_I, G_MULT, T_SYN, T_MIN, T_NEU
 from .synapse import Synapse, SynapseList
+
+# TODO: change output_idx to output_neuron_name
+Network = namedtuple("Network",
+                     ("window", "neuron_names", "synapses", "output_idx"))
 
 neural_functions = {
     "logarithm": {
