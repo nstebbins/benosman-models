@@ -7,7 +7,7 @@ Network = namedtuple("Network",
                      ("window", "output_neuron_names", "neuron_names",
                       "synapses"))
 
-logarithm = Network(0.5, {"output"},
+logarithm = Network(500, {"output"},
                     ["input", "first", "last", "acc", "output"],
                     {
                         SynapseGroupKey("input", "first"): [
@@ -35,7 +35,7 @@ logarithm = Network(0.5, {"output"},
                         ]
                     })
 
-maximum = Network(1, {"output"},
+maximum = Network(1000, {"output"},
                   ["input", "inputtwo", "larger", "largertwo", "output"],
                   {
                       SynapseGroupKey("input", "largertwo"): [
@@ -58,7 +58,7 @@ maximum = Network(1, {"output"},
                       ]
                   })
 
-inverting_mem = Network(0.8, {"output"},
+inverting_mem = Network(800, {"output"},
                         ["input", "first", "last", "acc", "recall", "output"],
                         {
                             SynapseGroupKey("input", "first"): [
@@ -87,7 +87,7 @@ inverting_mem = Network(0.8, {"output"},
                             ]
                         })
 
-non_inverting_mem = Network(0.8, {"output"},
+non_inverting_mem = Network(800, {"output"},
                             ["input", "first", "last", "acc", "acctwo",
                              "recall", "ready", "output"],
                             {
@@ -123,7 +123,7 @@ non_inverting_mem = Network(0.8, {"output"},
                                 ]
                             })
 
-full_subtractor = Network(1, {"output+", "output-"},
+full_subtractor = Network(1000, {"output+", "output-"},
                           ["inputone", "inputtwo", "syncone",
                            "synctwo", "inbone", "inbtwo", "output+",
                            "output-", "zero"],

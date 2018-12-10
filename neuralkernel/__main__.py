@@ -12,7 +12,7 @@ def main() -> None:
     # data = {'function': 'full_subtractor', 'initial_values': {'inputone':
     # [2000, 2900], 'inputtwo': [2000, 2400]}}
     output_neurons = simulate_neurons("logarithm",
-                                      {'input': [2000, 2700]})
+                                      {'input': [200, 270]})
     plot_neurons(output_neurons)
 
 

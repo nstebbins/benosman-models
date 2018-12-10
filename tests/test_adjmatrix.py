@@ -2,9 +2,9 @@ import unittest
 
 import numpy as np
 
-import neuralkernel.adjmatrix as adjmatrix
 import neuralkernel.constants as constants
 import neuralkernel.neuron as neuron
+import neuralkernel.synapse as adjmatrix
 import neuralkernel.synapse as synapse
 
 
@@ -18,7 +18,7 @@ class TestAdjMatrix(unittest.TestCase):
         ])
         neurons = [neuron.Neuron(neuron_name, t) for neuron_name in
                    ['one', 'two']]
-        self.adj_matrix = adjmatrix.AdjMatrix(neurons, synapses)
+        self.adj_matrix = adjmatrix.SynapseMatrix(neurons, synapses)
 
     def test_simulate(self):
         # actual

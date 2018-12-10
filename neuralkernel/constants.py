@@ -5,7 +5,7 @@ T_MIN = 10
 T_COD = 100
 T_MAX = T_MIN + T_COD  # time range
 T_SYN = 1
-T_NEU = 0.1  # slightly modified from paper
+T_NEU = 1  # slightly modified from paper
 
 # voltage constants in mV
 TAU_M = 100 * TO_MS
