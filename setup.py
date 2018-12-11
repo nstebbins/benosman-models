@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='neuralkernel',
-    version='0.0.2',
+    version='0.0.3',
     description='neural networks as a general-purpose computational framework',
     long_description=long_description,
     author='Noah Stebbins',
