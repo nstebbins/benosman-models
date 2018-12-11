@@ -8,19 +8,17 @@ import neuralkernel.neuron as neuron
 
 class TestNeuron(unittest.TestCase):
     def setUp(self):
-        t = np.arange(0, 3)
-        self.neuron = neuron.Neuron('one', t)
+        self.neuron = neuron.Neuron('one', np.arange(0, 3))
 
-    def test_populate_spikes_from_data(self):
+    def test_set_spikes(self):
         # actual
-        spike_indices = [1]
-        self.neuron.set_spikes(spike_indices)
+        self.neuron.set_spikes([1])
         # expected
         expected_v = np.asarray([0, constants.V_THRESHOLD, 0])
         # test
         np.testing.assert_almost_equal(self.neuron.v, expected_v)
 
-    def test_next_v(self):
+    def test_simulate(self):
         # actual
         self.neuron.ge[0] = 100
         self.neuron.v[0] = 0.05
