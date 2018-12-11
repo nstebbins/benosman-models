@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+# TODO: refactor
 def plot_neurons(output_neurons):
     fig = plt.figure(1, figsize=(15, 10), facecolor='white')
     big_ax = fig.add_subplot(111)  # overarching subplot

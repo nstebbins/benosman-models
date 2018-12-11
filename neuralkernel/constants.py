@@ -1,6 +1,5 @@
 # time constants in ms
 TO_MS = 1000
-T_TO_POS = 10
 T_MIN = 10
 T_COD = 100
 T_MAX = T_MIN + T_COD  # time range

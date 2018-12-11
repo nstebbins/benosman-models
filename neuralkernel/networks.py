@@ -190,3 +190,11 @@ full_subtractor = Network(1000, {"output+", "output-"},
                                   Synapse("v", 2 * W_I, T_NEU),
                               ]
                           })
+
+available_networks = {
+    "logarithm": logarithm,
+    "maximum": maximum,
+    "inverting_mem": inverting_mem,
+    "non_inverting_mem": non_inverting_mem,
+    "full_subtractor": full_subtractor
+}

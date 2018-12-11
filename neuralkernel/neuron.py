@@ -20,7 +20,8 @@ class Neuron:
         return self.v[time] >= V_THRESHOLD
 
     def update(self, field, idx, offset):
-        # TODO: docstring
+        """general update of neuron state variable"""
+
         if field in {"v", "ge", "gf"}:
             getattr(self, field)[idx] += offset
         # TODO: change 'gates' logic and handle unknown fields
@@ -29,6 +30,7 @@ class Neuron:
 
     def simulate(self, idx):
         """simulate neuron at index"""
+
         if self.v[idx - 1] >= V_THRESHOLD:
             v_prev = 0
             ge_prev = 0
