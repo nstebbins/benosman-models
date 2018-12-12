@@ -4,6 +4,7 @@ from .constants import V_THRESHOLD, TAU_F, TAU_M
 
 
 class Neuron:
+    OFFSET_TO_GATE_WEIGHT = {1: 1, -1: 0}
 
     def __init__(self, name, t):
         self.name = name
@@ -24,9 +25,10 @@ class Neuron:
 
         if field in {"v", "ge", "gf"}:
             getattr(self, field)[idx] += offset
-        # TODO: change 'gates' logic and handle unknown fields
         elif field == "gate":
-            getattr(self, field)[idx] = {1: 1, -1: 0}[offset]
+            getattr(self, field)[idx] = self.OFFSET_TO_GATE_WEIGHT[offset]
+        else:
+            raise ValueError("field " + str(field) + " not supported")
 
     def simulate(self, idx):
         """simulate neuron at index"""
@@ -43,6 +45,6 @@ class Neuron:
             gate_prev = self.gate[idx - 1]
         dt = self.t[idx] - self.t[idx - 1]
         self.ge[idx] += ge_prev
-        self.gate[idx] = max([self.gate[idx], gate_prev])  # TODO: simplify
+        self.gate[idx] = max([self.gate[idx], gate_prev])
         self.gf[idx] += gf_prev + dt * (-gf_prev / TAU_F)
         self.v[idx] += v_prev + dt * ((ge_prev + gf_prev * gate_prev) / TAU_M)

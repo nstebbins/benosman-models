@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# TODO: refactor
 def plot_neurons(output_neurons):
     fig = plt.figure(1, figsize=(15, 10), facecolor='white')
     big_ax = fig.add_subplot(111)  # overarching subplot
@@ -18,7 +17,7 @@ def plot_neurons(output_neurons):
     big_ax.set_ylabel('voltage (mV)')
 
     # plot
-    i = 0  # TODO: remove this
+    i = 0
     for neuron_name, neuron in output_neurons.items():
         subplot_num = int(str(len(output_neurons)) + "1" + str(i + 1))
         ax = fig.add_subplot(subplot_num)
