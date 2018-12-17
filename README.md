@@ -29,5 +29,5 @@ For more information on each of these networks, please check out the `docs` fold
 To run the unit tests, you can run the following.
 
 ```bash
-python -m unittest discover tests
+pytest
 ```
