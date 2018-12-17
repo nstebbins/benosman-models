@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='neuralkernel',
-    version='0.0.5',
+    version='0.0.6',
     description='neural networks as a general-purpose computational framework',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -23,4 +23,5 @@ setup(
     ],
     packages=find_packages(exclude=['docs', 'tests']),
     install_requires=['numpy', 'matplotlib'],
+    tests_require=['pytest']
 )
