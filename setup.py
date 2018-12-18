@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='neuralkernel',
-    version='0.0.7',
+    version='0.0.8',
     description='neural networks as a general-purpose computational framework',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -24,6 +24,6 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     packages=find_packages(exclude=['docs', 'tests']),
-    install_requires=['numpy', 'matplotlib'],
+    install_requires=['numpy', 'matplotlib', 'seaborn'],
     tests_require=['pytest']
 )
